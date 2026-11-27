@@ -25,6 +25,14 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
   `packaging/install_desktop.ps1` (re)creates shortcuts and Open with. Self-check script:
   `examples/full_feature_test.m` (132 PASS lines, about 10 s); `examples/control_pid_example.m`.
 
+## Release workflow (Phase 10)
+- GitHub: https://github.com/LA3zz/Engineering-Studio (branch main). Git = GitHub Desktop's
+  git (`%LOCALAPPDATA%\GitHubDesktop\app-*\resources\app\git\cmd\git.exe`); sign-in via Git
+  Credential Manager. Commit and push after every milestone.
+- Build: `.\packaging\build.ps1` (dist\EngineeringStudio) then `.\packaging\make_installer.ps1`
+  (installer_output\EngineeringStudio-Setup-<version>.exe). Bump `engstudio/version.py` first.
+- Publish: GitHub Releases, tag `v<version>`, attach the setup .exe and its .sha256.
+
 ## Conventions and gotchas
 - PowerShell 5.1: write files UTF-8 without BOM ([IO.File]::WriteAllText + UTF8Encoding($false));
   `>` writes UTF-16. Wrap stderr-writing tools with `cmd /c "... 2>&1"`.

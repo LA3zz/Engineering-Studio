@@ -1,0 +1,17 @@
+Engineering Studio - offline engineering computation environment
+
+Engineering Studio is a student project, provided free of charge and "as is", without
+warranty of any kind. Check important results independently before relying on them.
+
+It is not affiliated with or endorsed by The MathWorks, Inc. MATLAB and Simulink are
+trademarks of The MathWorks, Inc.
+
+The application includes open-source software, each under its own license: Python, NumPy,
+SciPy, SymPy, Matplotlib, PyQtGraph, python-control, pandas, Qt for Python (PySide6, LGPL v3)
+and others. The full list with license names is in THIRD_PARTY_NOTICES.txt in the
+installation folder.
+
+Everything runs on this computer. The application does not send any data anywhere; Help >
+Check for updates only contacts GitHub when you click it.
+
+Source code and updates: https://github.com/LA3zz/Engineering-Studio

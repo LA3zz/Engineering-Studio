@@ -55,7 +55,8 @@ def about_text() -> str:
         "<p>Built with open-source software: NumPy, SciPy, SymPy, Matplotlib, PyQtGraph, "
         "python-control, Qt for Python (PySide6, LGPL). Not affiliated with MathWorks; "
         "MATLAB is a trademark of The MathWorks, Inc.</p>"
-        "<p>Help: Help &gt; Documentation. Self-check: run examples/full_feature_test.m.</p>"
+        "<p>Help: the Documentation panel (View &gt; Panels). Updates: Help &gt; Check for "
+        "Updates. Source: github.com/LA3zz/Engineering-Studio</p>"
     )
 STATE_VERSION = 1  # bump when the set of docks/toolbars changes (invalidates saved layouts)
 
@@ -177,6 +178,8 @@ class MainWindow(QMainWindow):
         self.act_toggle_theme = self._action("Toggle Light/Dark", self.toggle_theme,
                                              "Ctrl+Shift+T")
         self.act_about = self._action("&About", self.show_about)
+        self.act_updates = self._action("Check for &Updates...", self.check_updates,
+                                        tip="Ask GitHub whether a newer version exists")
         self.act_customize = self._action("&Customize...", self.customize_theme,
                                           tip="Edit colours and save custom themes")
         self.act_run = self._action("&Run Script", self.run_script, "F5",
@@ -224,7 +227,10 @@ class MainWindow(QMainWindow):
         run = mb.addMenu("&Run")
         run.addActions([self.act_run, self.act_run_selection, self.act_stop])
 
-        mb.addMenu("&Help").addAction(self.act_about)
+        help_menu = mb.addMenu("&Help")
+        help_menu.addAction(self.act_updates)
+        help_menu.addSeparator()
+        help_menu.addAction(self.act_about)
 
     def _create_toolbar(self) -> None:
         tb = self.addToolBar("Home")
@@ -559,6 +565,14 @@ class MainWindow(QMainWindow):
     def _close_current(self) -> None:
         if self.tabs.count():
             self.tabs.close_tab(self.tabs.currentIndex())
+
+    def check_updates(self) -> None:
+        """Help > Check for Updates: one request to GitHub, only when clicked."""
+        from engstudio.gui.updates import UpdateChecker
+        from engstudio.version import __version__
+
+        self._update_checker = UpdateChecker(__version__, self)
+        self._update_checker.check()
 
     def show_about(self) -> None:
         QMessageBox.about(self, f"About {APP_NAME}", about_text())

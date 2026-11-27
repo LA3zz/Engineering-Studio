@@ -104,7 +104,10 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
 - [ ] Phase 8 engineering toolboxes (one at a time)
 - [ ] Phase 9 integration and quality assurance
 - [~] Phase 10 packaging: [x] P10a desktop shortcut, Open with for .m, single instance (2026-11-27);
-  [ ] GUI in the PyInstaller spec, Inno Setup installer, clean-PC test T2.7b
+  [~] P10b (2026-11-27): GUI in the PyInstaller spec (EngineeringStudio.exe windowed +
+  engstudio-console.exe), Inno Setup installer (per user, Open with, uninstaller, notices),
+  Help > Check for Updates (GitHub Releases), README, GitHub repo LA3zz/Engineering-Studio;
+  [ ] clean-PC test T2.7b (needs a second PC or a VM)
 - Backlog: compile anonymous functions for ODE speed; sum/mean/... 'all' option; struct arrays.
 
 ## Phase 5 plotting (done 2026-11-27)

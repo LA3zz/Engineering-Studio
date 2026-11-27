@@ -1,6 +1,15 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - P10b installer and GitHub
+- Packaging: `packaging/engstudio.spec` builds EngineeringStudio.exe (windowed GUI, start-up
+  errors shown in a message box and `%LOCALAPPDATA%\EngineeringStudio\startup_error.txt`) and
+  engstudio-console.exe; unused Qt modules excluded; `packaging/build.ps1` smoke checks.
+- Installer: `packaging/installer.iss` + `packaging/make_installer.ps1` (Inno Setup; per-user,
+  fixed AppId for in-place upgrades, Start menu/desktop shortcuts, Open with for .m,
+  THIRD_PARTY_NOTICES.txt from `tools/third_party_notices.py`, SHA-256 file).
+- Help > Check for Updates (`gui.updates`, GitHub Releases API, only when clicked).
+- README.md; project published to https://github.com/LA3zz/Engineering-Studio.
 ## 2026-11-27 - Phase 6 complete (C3, C4), B2b closed, version 0.6.0
 - Plots: step, impulse, initial, lsim, bode, margin, nyquist, rlocus, pzmap (overlay several
   systems with line specs; data outputs instead of plots when outputs are requested).
