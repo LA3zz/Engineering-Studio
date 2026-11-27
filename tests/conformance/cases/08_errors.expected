@@ -1,0 +1,5 @@
+my:id | bad value 42
+caught
+1 simple message
+negative: -2.5
+done

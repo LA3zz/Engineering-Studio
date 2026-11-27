@@ -1,0 +1,19 @@
+# Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+*.egg-info/
+
+# Build output (PyInstaller, installer)
+build/
+dist/
+installer_output/
+build_log.txt
+
+# Files written by the self-test scripts and temporary exports
+es_selftest_*
+*.tmp

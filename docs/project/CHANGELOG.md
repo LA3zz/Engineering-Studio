@@ -1,0 +1,213 @@
+# CHANGELOG
+Format: Keep a Changelog style. Newest first.
+
+## 2026-11-27 - Phase 6 complete (C3, C4), B2b closed, version 0.6.0
+- Plots: step, impulse, initial, lsim, bode, margin, nyquist, rlocus, pzmap (overlay several
+  systems with line specs; data outputs instead of plots when outputs are requested).
+- `pidtune(G, type[, wc])` with info struct; docs page "Control systems and PID";
+  `examples/control_pid_example.m`; control section in `examples/full_feature_test.m`.
+- `matlabFunction(f[, 'Vars', {...}])` (symbolic -> element-wise anonymous function); B2b closed.
+- Fixes: 2-D axes no longer show SI-prefix scaling ("x0.001"); xline/yline on log axes were
+  drawn at the wrong position; margin reports Inf crossover when there is none.
+- Help > About shows the real version and contents; version 0.6.0.
+## 2026-11-27 - Phase 6 C1+C2: control systems engine and interpreter values
+- `control.lti`: LtiSystem (tf/zpk/ss, continuous/discrete), conversions, series/parallel/
+  feedback, poles/zeros/dcgain/damp/stability, step/impulse/initial/lsim, bode/nyquist data,
+  margin, stepinfo, c2d, root-locus data, pid/pidstd, pidtune (60 deg phase-margin loop
+  shaping). python-control is imported lazily (3 s).
+- Interpreter: `LtiValue` (class tf/zpk/ss) with MATLAB-style display, operators (`*`, `+`,
+  `-`, `/`, `^`, `s = tf('s')`), builtins tf, zpk, ss, pid, pidstd, feedback, series, parallel,
+  pole, zero, dcgain, damp, isstable, stepinfo, margin, c2d, tfdata, zpkdata, ssdata, order,
+  isdt, minreal (toolbox category "Control systems").
+- pytest `faulthandler_timeout = 300`: a stuck test prints its stack.
+## 2026-11-27 - P10a desktop launch, Open with, speed
+- Desktop/Start menu shortcut and "Open with > Engineering Studio" for .m files
+  (`packaging/install_desktop.ps1`, per user, `-Uninstall` removes them); app icon
+  (`gui/engstudio.ico`, `tools/make_icon.py`); splash screen while loading.
+- Single instance (`gui.single_instance`): a second launch hands its .m files to the open window.
+  `python -m engstudio.gui file.m` opens files in the editor.
+- Speed: exact fast paths for real double scalars in `ops.binary_op`, scalar indexing and
+  double matrix literals (anonymous-function calls 3x faster; Lab 5 31 s -> 14 s); Matplotlib's
+  window code loads on first 3-D plot; first Matplotlib import serialized across threads.
+- Fix: `clear all` no longer deletes the running script's own local functions.
+- `examples/full_feature_test.m`: 125 self-checks over every command group and plot type.
+## 2026-11-27 - Phase 5 plotting complete (P5.2-P5.5)
+- Plot commands: subplot, axes, title/xlabel/ylabel/zlabel/sgtitle, grid, box, legend, xlim/
+  ylim/zlim, axis, ticks and tick labels, text, set/get; bar, stem, stairs, area, scatter,
+  semilog/loglog, histogram/hist/histcounts; plot3, scatter3, surf, mesh, contour(f), view,
+  colormap, colorbar, shading, polarplot, errorbar, xline, yline; pause, animatedline,
+  addpoints, clearpoints, saveas, print, exportgraphics (incl. animated GIF).
+- `plotting.model`: SurfaceSpec, TextSpec, axes cells/ticks/projection/colormap, figure size;
+  `plotting.text`: MATLAB TeX subset (HTML, mathtext, Unicode); `gui.mpl_view`: embedded
+  Matplotlib canvas for 3-D/polar/contour/surface figures.
+- Kernel: figure updates throttled (30/s), drawnow paces animation loops, last frame flushed at
+  the end of a run; closing a figure window resets it in the kernel (`figure_closed`).
+- Fixes: '^' markers were drawn pointing down; Stop inside a builtin (cellfun, ode45, pause)
+  now reports "cancelled" instead of an error; figure windows no longer steal focus on each
+  frame. Also odeset options, deg2rad, rad2deg.
+## 2026-11-24 - B2b-1, B2b-2
+- `lang.builtins_poly`: poly, roots, polyval, polyfit. `lang.builtins_data`: trapz, cumtrapz, interp1 (extrap / fill value, `cubic` = pchip), std, var, median, rms, zscore, fft, ifft (vectors keep orientation, matrices per column). Documented differences from MATLAB: errors instead of NaN outside the data range, polyfit has one output, no `dim` argument.
+- Kernel: `close` command (no-op until Phase 5), `format short g` accepted with an info diagnostic, new toolbox categories.
+
+## [Unreleased]
+### Added
+- T2.7: packaging spike - `engstudio.selftest` (11 bundle checks incl. spawned child process and terminate), `--selftest`/`--selftest-gui` flags, `packaging/engstudio.spec`, `entry.py`, `build.ps1`. PyInstaller onedir build passes on the dev PC (282 MB).
+- T2.8: dependency versions pinned (`requirements.lock.txt` UTF-8, table in DEPENDENCIES.md).
+- T2.6: test-session offline guard (`tests/conftest.py`): blocks non-loopback connect/DNS/UDP, records attempts and fails tests that make them (even if the error is swallowed).
+- T2.5: `core.plugin` (`@tb_function` with automatic argument validation, `Arg`/`Ret`, `@sim_block` metadata, `toolbox.toml` manifest loader, `PLUGIN_API_VERSION`), `core.registry` (explicit `Registry`), `PluginError`; tests incl. beam-deflection reference case.
+- T2.4: `core.units` - explicit unit conversion (exact rational factors, compound expressions, offset temperatures, angle as separate dimension) with tests.
+- T2.3: architecture test enforcing layer rules, Qt/matplotlib placement, toolbox isolation and import cycles (checker itself tested on synthetic trees).
+- T2.2: `core.errors` (typed error hierarchy) and `core.diagnostics` (Diagnostic, SourceLoc) with unit tests.
+- T2.1: repo scaffold (pyproject, src layout, `python -m engstudio --version`, pytest/ruff config).
+- Phase 1: architecture design and project documentation set (no application code).
+
+## 2026-11-18
+### Added
+- `engstudio.lang.lexer` (T3.1): tokenizer for the v1 MATLAB-like subset (complex literals, transpose vs string, whitespace-separated matrix elements, comments, block comments, continuation), `LexError` (E_LEX).
+- `engstudio.gui` (G1): main window, menus, toolstrip, light/dark themes, six dockable panels (placeholders) with visibility controls, tabbed script editor, JSON UI settings, `python -m engstudio.gui [--smoke]`.
+- Tests: tests/lang/test_lexer.py, tests/gui/*.
+### Notes
+- UI settings use a JSON file (%APPDATA%\EngineeringStudio\ui_settings.json) as an interim stand-in for the SQLite store in ARCHITECTURE.md.
+### G2.1
+- Added engstudio.app.kernel: protocol (frozen message dataclasses), KernelClient (abstract), StubKernelClient (not an interpreter; name = number, clear). Tests: tests/app/test_kernel_stub.py.
+
+### G2.2
+- Added gui.command_window, gui.kernel_bridge, gui.history; panels.py now passes a PanelContext to factories; main_window/app_main patched (optional kernel argument, history persistence, View menu items). The app now runs against StubKernelClient.
+
+### G2.3
+- Added gui.workspace_panel (WorkspaceModel + WorkspacePanel: live variable table, sort, filter, Clear Selected/All via kernel, double-click to display), gui.formatting.format_size. panels.py patched to use it.
+
+## 2026-11-19 - G3.1
+- Added Current Folder browser (`gui.folder_panel`), wired into panels/main window.
+
+## 2026-11-19 - G3.2
+- Added Toolbox browser (`gui.toolbox_panel`), `ListToolboxes`/`ToolboxList` protocol messages, `KernelClient.list_toolboxes` (default: not supported), stub sample catalogue, `MainWindow.insert_in_command`.
+
+## 2026-11-19 - G4
+- Script editor syntax highlighting (`gui.highlight_rules` pure tokenizer, `gui.highlighter` Qt adapter, `app.syntax` keyword bridge); highlighting follows the light/dark theme.
+
+## 2026-11-19 - G5.1
+- Added `plotting.model` (validated immutable figure description) and the `FigureUpdate` kernel event.
+
+## 2026-11-19 - G5.1
+- Added `plotting.model` (validated immutable figure description) and the `FigureUpdate` kernel event.
+
+## 2026-11-19 - G5.2
+- Figure window: `gui.plot_params`, `gui.plots` (PyQtGraph), `gui.figure_window`; MainWindow opens and updates figure windows on `FigureUpdate`; stub `demo_plot`. Known limits: bar series are not in the legend and are skipped on log axes.
+
+## 2026-11-19 - G5.2
+- Figure window: `gui.plot_params`, `gui.plots` (PyQtGraph), `gui.figure_window`; MainWindow opens and updates figure windows on `FigureUpdate`; stub `demo_plot`. Known limits: bar series are not in the legend and are skipped on log axes.
+
+## 2026-11-19 - G5.3
+- Figure export: `plotting.export` (PNG/SVG/PDF via Matplotlib Agg, atomic writes), `app.figure_export`, Save As (Ctrl+S) in the Figure window.
+
+## 2026-11-20 - G5.2
+- Figure window: `gui.plot_params`, `gui.plots` (PyQtGraph), `gui.figure_window`; MainWindow opens and updates figure windows on `FigureUpdate`; stub `demo_plot`. Known limits: bar series are not in the legend and are skipped on log axes.
+
+## 2026-11-20 - G5.3
+- Figure export: `plotting.export` (PNG/SVG/PDF via Matplotlib Agg, atomic writes), `app.figure_export`, Save As (Ctrl+S) in the Figure window.
+
+## 2026-11-20 - G6.1
+- Diagnostics panel (`gui.diagnostic_log` pure history, `gui.diagnostics_panel`): table with severity, code, message, location, run; accumulates across executions; severity filters; Clear; theme-aware colours.
+
+## 2026-11-20 - G5.2
+- Figure window: `gui.plot_params`, `gui.plots` (PyQtGraph), `gui.figure_window`; MainWindow opens and updates figure windows on `FigureUpdate`; stub `demo_plot`. Known limits: bar series are not in the legend and are skipped on log axes.
+
+## 2026-11-20 - G5.3
+- Figure export: `plotting.export` (PNG/SVG/PDF via Matplotlib Agg, atomic writes), `app.figure_export`, Save As (Ctrl+S) in the Figure window.
+
+## 2026-11-20 - G6.1
+- Diagnostics panel (`gui.diagnostic_log` pure history, `gui.diagnostics_panel`): table with severity, code, message, location, run; accumulates across executions; severity filters; Clear; theme-aware colours.
+
+## 2026-11-20 - G5.2
+- Figure window: `gui.plot_params`, `gui.plots` (PyQtGraph), `gui.figure_window`; MainWindow opens and updates figure windows on `FigureUpdate`; stub `demo_plot`. Known limits: bar series are not in the legend and are skipped on log axes.
+
+## 2026-11-20 - G5.3
+- Figure export: `plotting.export` (PNG/SVG/PDF via Matplotlib Agg, atomic writes), `app.figure_export`, Save As (Ctrl+S) in the Figure window.
+
+## 2026-11-20 - G6.1
+- Diagnostics panel (`gui.diagnostic_log` pure history, `gui.diagnostics_panel`): table with severity, code, message, location, run; accumulates across executions; severity filters; Clear; theme-aware colours.
+
+## 2026-11-20
+- G6.2 Documentation panel (app.docs, gui.docs_panel, 10 pages).
+- E1 engine.validation and engine.linalg.
+
+## 2026-11-20
+- E2 engine.decomp and E3 engine.calculus recorded (built in earlier chats); test fix: nested pytest.approx replaced; 510 tests.
+
+<!-- docs-catchup E2-E8 -->
+## 2026-11-20 - E2 to E8 (catch-up entry)
+- E2 `engine.decomp`: lu, qr, svd, cholesky, eig, eigh (EigResult with residual and
+  vector_rcond; defective/Hermitian tolerances as module constants).
+- E3 `engine.calculus`: derivative (central/forward/backward, order 1-2), gradient, jacobian,
+  derivative_data, quad, dblquad (IntegrateResult), trapz, simpson, cumtrapz.
+- E4 `engine.roots`: bisect, brentq, newton, secant, polyroots, fsolve (RootResult).
+- E5 `engine.interp`: interp1, interp2 (explicit `method` and `extrap`).
+- E6 `engine.regression`: linfit, polyfit, polyval, fit_curve, confidence_intervals (FitResult).
+- E7 `engine.optimize`: minimize_scalar, minimize, linprog (MinimizeResult).
+- E8 `engine.stats`: descriptive statistics, quantile, iqr, zscore, cov, pearsonr,
+  confidence_interval_mean, ttest_1samp / ttest_ind / ttest_paired, histogram.
+- Docs: this entry, TEST_STATUS, API_REFERENCE, FILE_STRUCTURE and HANDOFF brought up to date.
+- Test count after E8: 638 (collected). Added `scripts/dump_api.py` (read-only helper).
+
+<!-- docs E9 -->
+## 2026-11-20 - E9
+- `engine.ode`: `solve_ode` over SciPy `solve_ivp` (RK45, RK23, DOP853, Radau, BDF, LSODA),
+  `OdeResult`, `METHODS`. Explicit rtol/atol, optional t_eval, events, user Jacobian, max_step,
+  first_step and an evaluation budget `max_nfev`. Non-finite right-hand side (blow-up), budget
+  exhaustion and solver failure raise `ConvergenceError`; diagnostics: ODE_WARNING,
+  ODE_EVENT (info), ODE_STIFF_SUSPECTED (explicit method with many evaluations).
+- Note: `OdeResult.y` has shape `(len(t), n_states)` (SciPy's is the transpose).
+
+<!-- docs E10 -->
+## 2026-11-20 - E10
+- `engine.transforms`: fft, ifft, rfft, irfft, fftfreq, rfftfreq (NumPy FFT, validated),
+  window (rect/boxcar, hann, hamming, blackman, bartlett, flattop; periodic or symmetric),
+  amplitude_spectrum (single-sided, window-gain corrected), psd (one-sided periodogram),
+  convolve (full/same/valid), butter_filter (low/high/band/bandstop, zero-phase option),
+  `SpectrumResult`, `WINDOWS`.
+
+<!-- docs E11 -->
+## 2026-11-20 - E11
+- `engine.symbolic` over SymPy: `SymExpr`, parse (tokenizer-guarded, no raw eval, exponent
+  cap), simplify, expand, factor, subs, equivalent, to_numeric, lambdify, diff, integrate,
+  limit, series, solve, solve_system, laplace, inverse_laplace. Unevaluated, conditional,
+  divergent, incomplete or non-existent results raise `NotSupportedError` instead of being
+  returned silently.
+
+<!-- docs E12 -->
+## 2026-11-21 - E12
+- `engine.uncertainty`: `propagate(f, x, ux, ...)` for a scalar model y = f(x) and
+  `UncertaintyResult`. Methods: GUM first-order law (central-difference sensitivities scaled to
+  the input magnitude, optional correlation matrix, coverage factor) and Monte Carlo (normal
+  inputs incl. correlation, seeded, optional vectorised model, symmetric coverage interval).
+  Diagnostics: UNC_NONLINEAR, UNC_CHECK_SKIPPED, UNC_CORRELATED, UNC_FEW_SAMPLES, UNC_UNSEEDED.
+
+<!-- docs E12b -->
+## 2026-11-21 - E12b
+- Documentation panel: new page `engine-api` (Math engine API, E1-E12) listing modules,
+  functions, result types, conventions and error behaviour; linked from the index page.
+
+<!-- docs G7 -->
+## 2026-11-21 - G7
+- Custom theme editor: View > Theme > Customize... (`gui.theme_dialog`). Edit every colour
+  role (double-click, hex field or QColorDialog), live preview, contrast warnings below 4.5:1,
+  named custom themes stored in UiSettings (`custom_themes`), reset to a base theme, JSON
+  import/export. Pure logic in `gui.theme_custom` (no Qt).
+- `gui.theme`: new `apply_palette(app, palette)`; `apply_theme(app, name)` now calls it.
+- `MainWindow`: `custom_themes`, `base_theme()`, custom entries in View > Theme.
+
+## B2b-3 (2026-11-25)
+- Added `lang.builtins_funcs` (fzero, integral, quad, quadgk, integral2, ode45, ode23, ode15s, fminsearch, fsolve) bound to engine.roots/calculus/ode/optimize; registered in InProcessKernelClient with categories solvers, integration, odes.
+
+## B2b-4 (2026-11-25)
+- Added `lang.builtins_analysis` (interp2, fminbnd, fminunc, linprog, quantile, prctile, ttest, ttest2) and `engine.stats.t_quantile`. Symbolic bindings deferred (value-model decision).
+
+## B2b-5 (2026-11-25)
+- Symbolic values: `SymValue` (class `sym`) in `lang.values`, operator hooks `lang.symops`, builtins `lang.builtins_sym` (syms, sym, diff, int, limit, taylor, solve, simplify, expand, factor, subs, laplace, ilaplace, latex, symvar, double/char/disp/elementary overloads), engine helpers in `engine.symbolic`, `syms x y` command syntax, symbolic display in the Command Window and Workspace.
+
+## K3 (2026-11-25)
+- Command Window: unfinished blocks/brackets/`...` continue on the next line (prompt `...`), Esc cancels, multi-line paste (Ctrl+V) runs as one block; `app.input_state.needs_more`. The single-line input API is unchanged.
+
+## P5.1 figure state (2026-11-26)
+- Added lang.figstate, lang.builtins_plot; FigureClosed kernel event; FigureSpec.name; command syntax after separators; `close` no longer a no-op.

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "engstudio"
+description = "Engineering Studio - offline engineering computation environment"
+requires-python = ">=3.11,<3.12"
+dynamic = ["version"]
+dependencies = [
+    "numpy", "scipy", "sympy", "pandas", "matplotlib",
+    "pyqtgraph", "PySide6", "control", "openpyxl",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-qt", "pytest-cov", "ruff", "pyinstaller"]
+
+[tool.setuptools.dynamic]
+version = { attr = "engstudio.version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+faulthandler_timeout = 300  # a stuck test prints its stack instead of hanging silently
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

@@ -1,0 +1,20 @@
+% anonymous functions capture values; handles; cellfun/arrayfun
+k = 3;
+f = @(x) x * k;
+k = 100;
+fprintf('%d\n', f(5));
+g = @(x, y) x.^2 + y;
+fprintf('%d\n', g(3, 1));
+h = @sin;
+fprintf('%g\n', h(0));
+compose = @(f1, f2) @(x) f1(f2(x));
+inc = @(x) x + 1;
+dbl = @(x) x * 2;
+fn = compose(inc, dbl);
+fprintf('%d\n', fn(5));
+c = cellfun(@(x) x * 2, {1, 2, 3});
+fprintf('%d ', c); fprintf('\n');
+c2 = cellfun(@(s) [s '!'], {'a', 'b'}, 'UniformOutput', false);
+fprintf('%s ', c2{:}); fprintf('\n');
+a = arrayfun(@(x) x^2, 1:4);
+fprintf('%d ', a); fprintf('\n');

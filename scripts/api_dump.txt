@@ -1,0 +1,109 @@
+## calculus: Numerical differentiation and integration (E3).
+  class IntegrateResult(value, error_estimate, nfev, converged, diagnostics)
+  def cumtrapz(y: 'ArrayLike', x: 'ArrayLike | None' = None, dx: 'float' = 1.0) -> 'NDArray'
+  def derivative(f: 'Callable[[float], float]', x: 'float', *, order: 'int' = 1, h: 'float | None' = None, method: 'str' = 'central') -> 'float'
+  def derivative_data(x: 'ArrayLike', y: 'ArrayLike') -> 'NDArray'
+  def dblquad(f: 'Callable[[float, float], float]', x0: 'float', x1: 'float', y0: 'float', y1: 'float', *, rtol: 'float' = 1.49e-08, atol: 'float' = 1.49e-08) -> 'IntegrateResult'
+  def gradient(f: 'Callable[[NDArray], float]', x: 'ArrayLike') -> 'NDArray'
+  def jacobian(f: 'Callable[[NDArray], ArrayLike]', x: 'ArrayLike') -> 'NDArray'
+  def quad(f: 'Callable[[float], float]', a: 'float', b: 'float', *, rtol: 'float' = 1.49e-08, atol: 'float' = 1.49e-08, limit: 'int' = 200) -> 'IntegrateResult'
+  def simpson(y: 'ArrayLike', x: 'ArrayLike | None' = None, dx: 'float' = 1.0) -> 'float'
+  def trapz(y: 'ArrayLike', x: 'ArrayLike | None' = None, dx: 'float' = 1.0) -> 'float'
+## decomp: Matrix decompositions and eigenproblems (E2), built on LAPACK through NumPy/SciPy.
+  class CholResult(factor, lower)
+  class EigResult(values, vectors, residual, vector_rcond, diagnostics)
+  class LuResult(P, L, U)
+  class QrResult(Q, R, mode)
+  class SvdResult(U, s, V)
+  def cholesky(a: 'ArrayLike', lower: 'bool' = False, tol: 'float' = 1e-12) -> 'CholResult'
+  def eig(a: 'ArrayLike') -> 'EigResult'
+  def eigh(a: 'ArrayLike', tol: 'float' = 1e-12) -> 'EigResult'
+  def lu(a: 'ArrayLike') -> 'LuResult'
+  def qr(a: 'ArrayLike', mode: 'str' = 'full') -> 'QrResult'
+  def svd(a: 'ArrayLike', full: 'bool' = False) -> 'SvdResult'
+  DEFECTIVE_RCOND = 1e-12
+  HERMITIAN_TOL = 1e-12
+## interp: Interpolation of sampled data (E5).
+  def interp1(x: 'ArrayLike', y: 'ArrayLike', xq: 'ArrayLike', *, method: 'str' = 'linear', extrap: 'str' = 'error') -> 'float | NDArray'
+  def interp2(x: 'ArrayLike', y: 'ArrayLike', z: 'ArrayLike', xq: 'ArrayLike', yq: 'ArrayLike', *, method: 'str' = 'linear', extrap: 'str' = 'error') -> 'float | NDArray'
+## linalg: Dense linear algebra with validation, conditioning checks and typed errors (E1).
+  class InvResult(value, rcond, diagnostics)
+  class SolveResult(x, residual_norm, rcond, method, diagnostics)
+  def cond(a: 'ArrayLike', p: 'float | str' = 2) -> 'float'
+  def cross(a: 'ArrayLike', b: 'ArrayLike') -> 'NDArray'
+  def det(a: 'ArrayLike') -> 'float | complex'
+  def dot(a: 'ArrayLike', b: 'ArrayLike') -> 'float | complex'
+  def inv(a: 'ArrayLike') -> 'InvResult'
+  def matmul(a: 'ArrayLike', b: 'ArrayLike') -> 'NDArray'
+  def norm(x: 'ArrayLike', kind: 'float | str' = 2) -> 'float'
+  def rank(a: 'ArrayLike', tol: 'float | None' = None) -> 'int'
+  def rcond(a: 'ArrayLike') -> 'float'
+  def solve(a: 'ArrayLike', b: 'ArrayLike') -> 'SolveResult'
+  def trace(a: 'ArrayLike') -> 'float | complex'
+  def transpose(a: 'ArrayLike') -> 'NDArray'
+  def ctranspose(a: 'ArrayLike') -> 'NDArray'
+  ILL_CONDITIONED_RCOND = 1e-12
+## optimize: Numerical optimization (E7).
+  class MinimizeResult(x, fun, converged, iterations, nfev, diagnostics, method)
+  def linprog(c: 'ArrayLike', A_ub: 'ArrayLike | None' = None, b_ub: 'ArrayLike | None' = None, A_eq: 'ArrayLike | None' = None, b_eq: 'ArrayLike | None' = None, bounds: 'Sequence[tuple[float | None, float | None]] | None' = None) -> 'MinimizeResult'
+  def minimize(f: 'Callable[[NDArray], float]', x0: 'ArrayLike', *, jac: 'Callable[[NDArray], ArrayLike] | None' = None, bounds: 'Sequence[tuple[float | None, float | None]] | None' = None, constraints: 'Sequence[dict] | None' = None, method: 'str | None' = None, tol: 'float' = 1e-08, maxiter: 'int' = 1000) -> 'MinimizeResult'
+  def minimize_scalar(f: 'Callable[[float], float]', a: 'float', b: 'float', *, xtol: 'float' = 1e-10, maxiter: 'int' = 500) -> 'MinimizeResult'
+## regression: Regression and curve fitting (E6).
+  class FitResult(params, covariance, residuals, r_squared, diagnostics, stderr, dof, method, nfev)
+  def confidence_intervals(result: 'FitResult', level: 'float' = 0.95) -> 'NDArray'
+  def fit_curve(f: 'Callable[..., ArrayLike]', x: 'ArrayLike', y: 'ArrayLike', p0: 'ArrayLike', *, sigma: 'ArrayLike | None' = None, absolute_sigma: 'bool' = False, bounds: 'tuple[ArrayLike, ArrayLike] | None' = None, maxfev: 'int' = 2000) -> 'FitResult'
+  def linfit(A: 'ArrayLike', y: 'ArrayLike', *, weights: 'ArrayLike | None' = None) -> 'FitResult'
+  def polyfit(x: 'ArrayLike', y: 'ArrayLike', deg: 'int', *, weights: 'ArrayLike | None' = None) -> 'FitResult'
+  def polyval(p: 'ArrayLike', x: 'ArrayLike') -> 'float | NDArray'
+## roots: Root finding and equation solving (E4).
+  class RootResult(root, converged, iterations, residual, diagnostics, method, nfev)
+  def bisect(f: 'Callable[[float], float]', a: 'float', b: 'float', *, rtol: 'float' = 1e-12, atol: 'float' = 1e-14, maxiter: 'int' = 200) -> 'RootResult'
+  def brentq(f: 'Callable[[float], float]', a: 'float', b: 'float', *, rtol: 'float' = 1e-12, atol: 'float' = 1e-14, maxiter: 'int' = 100) -> 'RootResult'
+  def fsolve(f: 'Callable[[NDArray], ArrayLike]', x0: 'ArrayLike', *, jac: 'Callable[[NDArray], ArrayLike] | None' = None, rtol: 'float' = 1e-10, atol: 'float' = 1e-12, maxiter: 'int' = 100) -> 'RootResult'
+  def newton(f: 'Callable[[float], float]', x0: 'float', *, fprime: 'Callable[[float], float] | None' = None, rtol: 'float' = 1e-12, atol: 'float' = 1e-14, maxiter: 'int' = 100) -> 'RootResult'
+  def polyroots(coeffs: 'ArrayLike') -> 'RootResult'
+  def secant(f: 'Callable[[float], float]', x0: 'float', x1: 'float', *, rtol: 'float' = 1e-12, atol: 'float' = 1e-14, maxiter: 'int' = 100) -> 'RootResult'
+## stats: Descriptive statistics, correlation, confidence intervals and t-tests (E8).
+  class CorrResult(r, p_value, n)
+  class Summary(n, mean, std, sem, min, q1, median, q3, max)
+  class TestResult(statistic, p_value, dof, diagnostics, method)
+  def confidence_interval_mean(x: 'ArrayLike', level: 'float' = 0.95) -> 'tuple[float, float, float]'
+  def cov(x: 'ArrayLike', y: 'ArrayLike', ddof: 'int' = 1) -> 'float'
+  def histogram(x: 'ArrayLike', bins: 'int | ArrayLike' = 10, *, range_: 'tuple[float, float] | None' = None) -> 'tuple[NDArray, NDArray]'
+  def iqr(x: 'ArrayLike', *, method: 'str' = 'linear') -> 'float'
+  def kurtosis(x: 'ArrayLike') -> 'float'
+  def mean(x: 'ArrayLike') -> 'float'
+  def median(x: 'ArrayLike') -> 'float'
+  def pearsonr(x: 'ArrayLike', y: 'ArrayLike') -> 'CorrResult'
+  def quantile(x: 'ArrayLike', q: 'ArrayLike', *, method: 'str' = 'linear') -> 'float | NDArray'
+  def rms(x: 'ArrayLike') -> 'float'
+  def sem(x: 'ArrayLike') -> 'float'
+  def skewness(x: 'ArrayLike') -> 'float'
+  def std(x: 'ArrayLike', ddof: 'int' = 1) -> 'float'
+  def summary(x: 'ArrayLike') -> 'Summary'
+  def ttest_1samp(x: 'ArrayLike', popmean: 'float' = 0.0, *, alternative: 'str' = 'two-sided') -> 'TestResult'
+  def ttest_ind(x: 'ArrayLike', y: 'ArrayLike', *, equal_var: 'bool' = False, alternative: 'str' = 'two-sided') -> 'TestResult'
+  def ttest_paired(x: 'ArrayLike', y: 'ArrayLike', *, alternative: 'str' = 'two-sided') -> 'TestResult'
+  def var(x: 'ArrayLike', ddof: 'int' = 1) -> 'float'
+  def zscore(x: 'ArrayLike', ddof: 'int' = 1) -> 'NDArray'
+## validation: Input validation helpers shared by the engine modules.
+  def as_matrix(a: 'ArrayLike', name: 'str' = 'a', *, allow_complex: 'bool' = True, square: 'bool' = False, allow_empty: 'bool' = False) -> 'NDArray'
+  def as_vector(a: 'ArrayLike', name: 'str' = 'a', *, allow_complex: 'bool' = True, allow_empty: 'bool' = False, length: 'int | None' = None) -> 'NDArray'
+  def singular_error(message: 'str', rcond: 'float') -> 'SingularMatrixError'
+## TEST COUNTS PER FILE
+  tests/engine/test_engine_calculus.py: 16
+  tests/engine/test_engine_decomp.py: 24
+  tests/engine/test_engine_linalg.py: 20
+  tests/engine/test_engine_validation.py: 14
+  tests/engine/test_interp.py: 27
+  tests/engine/test_optimize.py: 23
+  tests/engine/test_regression.py: 24
+  tests/engine/test_roots.py: 38
+  tests/engine/test_stats.py: 16
+  tests/unit/test_core_errors_diagnostics.py: 9
+  tests/unit/test_core_plugin_registry.py: 29
+  tests/unit/test_core_units.py: 23
+  tests/unit/test_offline_guard.py: 8
+  tests/unit/test_selftest.py: 5
+  tests/unit/test_version.py: 3
+  TOTAL collected: 638
