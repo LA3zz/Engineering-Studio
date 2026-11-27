@@ -111,6 +111,17 @@ def _no_network_attempts():
         pytest.fail(f"network access attempted during test: {found}", pytrace=False)
 
 
+@pytest.fixture(autouse=True)
+def _restore_working_folder():
+    """cd, the Current Folder panel and examples change the working folder; undo it."""
+    import os
+
+    before = os.getcwd()
+    yield
+    if os.getcwd() != before:
+        os.chdir(before)
+
+
 @pytest.fixture
 def blocked_attempts():
     """For tests that deliberately trigger the guard: the recorded attempts (cleared after)."""

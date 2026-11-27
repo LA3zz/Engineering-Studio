@@ -11,11 +11,13 @@
   ``xlswrite(file, A)`` for older scripts (``r, c`` are zero-based offsets as in MATLAB).
 
 Relative names are read from the working folder, then next to the running script; files are
-written to the working folder.
+written to the working folder. ``cd folder`` / ``cd('..')`` change the working folder (the Current
+Folder panel follows) and ``pwd`` returns it.
 """
 
 from __future__ import annotations
 
+import os
 import re
 from collections.abc import Callable
 from pathlib import Path
@@ -101,7 +103,30 @@ def _field_name(raw: object, k: int, used: set[str]) -> str:
     return name
 
 
-def file_functions(script_dir: Callable[[], Path | None] | None = None) -> dict[str, Builtin]:
+def file_functions(script_dir: Callable[[], Path | None] | None = None,
+                   folder_changed: Callable[[str], None] | None = None,
+                   write: Callable[[str], None] | None = None) -> dict[str, Builtin]:
+    def cd(args: list, nargout: int) -> list:
+        old = str(Path.cwd())
+        if not args:
+            if nargout:
+                return [CharArray.from_str(old)]
+            if write is not None:
+                write(old + "\n")
+            return []
+        target_dir = Path(_text(args[0], "cd: the folder")).expanduser()
+        try:
+            os.chdir(target_dir)
+        except OSError:
+            raise ValidationError(f"cd: cannot change to folder {target_dir}") from None
+        new = str(Path.cwd())
+        if folder_changed is not None and new != old:
+            folder_changed(new)
+        return [CharArray.from_str(old)] if nargout else []
+
+    def pwd(args: list, nargout: int) -> list:
+        return [CharArray.from_str(str(Path.cwd()))]
+
     def find(v: object, who: str) -> Path:
         path = Path(_text(v, f"{who}: the file name"))
         if path.exists():
@@ -237,6 +262,7 @@ def file_functions(script_dir: Callable[[], Path | None] | None = None) -> dict[
             raise ValidationError("xlswrite: use xlswrite('data.xlsx', A)")
         return writematrix([args[1], args[0]], 0)
 
-    return {"readmatrix": readmatrix, "readtable": readtable, "writematrix": writematrix,
+    return {"cd": cd, "pwd": pwd, "readmatrix": readmatrix, "readtable": readtable,
+            "writematrix": writematrix,
             "writetable": writetable, "csvread": csvread, "csvwrite": csvwrite,
             "xlsread": xlsread, "xlswrite": xlswrite}

@@ -31,6 +31,7 @@ from engstudio.app.kernel.protocol import (
     ExecutionFinished,
     FigureClosed,
     FigureUpdate,
+    FolderChanged,
     OpenModel,
     Stdout,
     ToolboxFunction,
@@ -69,6 +70,8 @@ _COMMAND = re.compile(
     r"((?:[ \t]+[A-Za-z_][\w.*]*)*)[ \t]*(?:([;,])[ \t]*(.*)|(%.*))?$"
 )
 
+_CD = re.compile(r"^(\s*)cd[ \t]+([^\s(=;,'\"%][^;%]*?)[ \t]*(;?)[ \t]*(%.*)?$")
+
 _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
     "constants": ("Constants", (
         "pi", "e", "Inf", "inf", "NaN", "nan", "eps", "i", "j", "true", "false", "realmax",
@@ -93,7 +96,8 @@ _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
         "iscomplex", "islogical", "ischar", "iscell", "isstruct", "is_function_handle", "isnan",
         "isinf", "isfinite")),
     "io": ("Input and output", ("disp", "fprintf", "sprintf", "num2str", "error", "warning")),
-    "files": ("Files and lab data", ("readmatrix", "readtable", "writematrix", "writetable",
+    "files": ("Files and lab data", ("cd", "pwd", "readmatrix", "readtable", "writematrix",
+                                     "writetable",
                                      "csvread", "csvwrite", "xlsread", "xlswrite")),
     "text": ("Strings", (
         "strcmp", "strcmpi", "strncmp", "strncmpi", "upper", "lower", "strtrim", "strrep",
@@ -180,6 +184,11 @@ def _separators(line: str) -> list[int]:
 
 
 def _rewrite_command(line: str) -> str:
+    cd = _CD.match(line)
+    if cd:  # ``cd ..``, ``cd C:\data``, ``cd my folder``: the rest of the line is the path
+        indent, path, term, comment = cd.groups()
+        quoted = path.strip().replace("'", "''")
+        return f"{indent}cd('{quoted}'){term or ''}{(' ' + comment) if comment else ''}"
     m = _COMMAND.match(line)
     if not m:
         for k in _separators(line):  # ``bar(x); hold on``: a command after a separator
@@ -255,7 +264,11 @@ class InProcessKernelClient(KernelClient):
             min_interval=FIGURE_INTERVAL)
         install_control_plots(self._interp, self._figures)
         self._interp.functions.update(self._workspace_commands())
-        self._interp.functions.update(file_functions(self._script_dir))
+        def folder_changed(path: str) -> None:
+            self._deliver(FolderChanged(self._host.request_id, path))
+
+        self._interp.functions.update(file_functions(self._script_dir, folder_changed,
+                                                     self._host.write))
         self._toolbox_categories = self._install_toolboxes()
         self._interp.functions.update(sim_functions(
             self._interp, self._figures,

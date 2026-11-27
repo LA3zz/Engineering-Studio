@@ -120,7 +120,15 @@ class OpenModel:
     path: str
 
 
+@dataclass(frozen=True)
+class FolderChanged:
+    """The script changed the working folder (``cd``); the Current Folder panel follows."""
+
+    request_id: int
+    path: str
+
+
 Event = (
     Stdout | Diagnostics | WorkspaceSummary | ExecutionFinished | ToolboxList
-    | FigureUpdate | FigureClosed | OpenModel
+    | FigureUpdate | FigureClosed | OpenModel | FolderChanged
 )

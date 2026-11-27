@@ -2,7 +2,9 @@
 
 Pure GUI component: it never touches the kernel. Double-clicking a folder enters it,
 double-clicking a ``.m`` file emits ``open_file_requested``. The chosen folder is stored in
-``UiSettings`` under ``current_folder``. It does not change the process working directory.
+``UiSettings`` under ``current_folder``. It does not change the process working directory
+itself: the main window follows ``folder_changed`` with a chdir (the Current Folder is the
+working folder, as in MATLAB), and moves the panel when a script runs ``cd``.
 """
 
 from __future__ import annotations

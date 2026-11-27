@@ -156,6 +156,20 @@ def test_main_window_integration(app, tree):
         win.deleteLater()
 
 
+def test_current_folder_is_the_working_folder(app, tree):
+    from engstudio.app.kernel.protocol import FolderChanged
+
+    win = MainWindow(UiSettings(None))
+    try:
+        win.folder_panel.set_folder(tree / "sub")  # panel -> working folder
+        assert Path.cwd() == (tree / "sub").resolve()
+        win._on_kernel_event(FolderChanged(1, str(tree)))  # script ran cd -> panel follows
+        assert win.folder_panel.folder == tree.resolve() and Path.cwd() == tree.resolve()
+    finally:
+        win.close()
+        win.deleteLater()
+
+
 def test_activate_esmodel_requests_the_model_editor(qtbot, tmp_path):
     from engstudio.gui.folder_panel import FolderPanel
     p = FolderPanel()

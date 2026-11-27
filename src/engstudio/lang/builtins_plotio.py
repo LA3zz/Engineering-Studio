@@ -10,7 +10,7 @@ Differences from MATLAB:
 - ``pause`` without arguments (wait for a key press) and ``pause('on'/'off')`` are not
   supported; the longest pause is 3600 s. ``pause`` can be stopped with Stop.
 - ``saveas``/``print``/``exportgraphics`` write PNG, SVG, PDF (and GIF for exportgraphics);
-  relative file names are relative to the working folder of the application process.
+  relative file names are relative to the working folder (the Current Folder; see `cd`).
   ``print`` takes '-dpng', '-dsvg', '-dpdf' and '-r<dpi>'; '-clipboard' and printers are not
   supported. The page size follows the figure (7.2 x 4.8 in), not MATLAB's paper settings.
 - GIF frames are kept in memory until the file is complete; frame delay 0.1 s

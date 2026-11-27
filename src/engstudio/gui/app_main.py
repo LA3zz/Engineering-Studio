@@ -79,6 +79,8 @@ def main(argv: list[str] | None = None) -> int:
 
     opener.append(open_files)
     open_files(waiting)
+    if window.folder_panel is not None and not smoke:  # working folder = Current Folder
+        window.sync_working_folder(str(window.folder_panel.folder))
     if smoke:
         QTimer.singleShot(800, app.quit)
     code = app.exec()

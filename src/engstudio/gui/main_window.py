@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from PySide6.QtCore import QByteArray, Qt
@@ -16,7 +17,13 @@ from PySide6.QtWidgets import (
 )
 
 from engstudio.app.kernel.client import KernelClient
-from engstudio.app.kernel.protocol import ExecutionFinished, FigureClosed, FigureUpdate, OpenModel
+from engstudio.app.kernel.protocol import (
+    ExecutionFinished,
+    FigureClosed,
+    FigureUpdate,
+    FolderChanged,
+    OpenModel,
+)
 from engstudio.core.errors import EngStudioError
 from engstudio.gui.command_window import CommandWindow
 from engstudio.gui.diagnostics_panel import DiagnosticsPanel
@@ -123,7 +130,8 @@ class MainWindow(QMainWindow):
         self.folder_panel = folder if isinstance(folder, FolderPanel) else None
         if self.folder_panel is not None:
             self.folder_panel.open_file_requested.connect(self.tabs.open_path)
-        self.folder_panel.open_model_requested.connect(self.open_model)
+            self.folder_panel.open_model_requested.connect(self.open_model)
+            self.folder_panel.folder_changed.connect(self.sync_working_folder)
         tools = self.docks["toolboxes"].widget()
         self.toolbox_panel = tools if isinstance(tools, ToolboxPanel) else None
         if self.toolbox_panel is not None:
@@ -361,6 +369,9 @@ class MainWindow(QMainWindow):
             self.close_figure(event.number)
         elif isinstance(event, OpenModel):
             self.open_model(event.path)
+        elif isinstance(event, FolderChanged):
+            if self.folder_panel is not None:
+                self.folder_panel.set_folder(event.path)
         elif isinstance(event, ExecutionFinished):
             text = {"ok": "Done", "error": "Finished with errors", "cancelled": "Stopped"}
             self.statusBar().showMessage(text.get(event.status, "Done"), 4000)
@@ -586,6 +597,15 @@ class MainWindow(QMainWindow):
         self.sim_editors.append(editor)
         editor.show()
         return editor
+
+    def sync_working_folder(self, path: str) -> None:
+        """The Current Folder is the working folder (as in MATLAB): relative file names in
+        scripts (readmatrix, saveas, sim, ...) resolve against it. The kernel runs in this
+        process, so one chdir serves both."""
+        try:
+            os.chdir(path)
+        except OSError:
+            pass
 
     def open_model(self, path: str):
         """Open a .esmodel in the editor (Simulation menu, Current Folder, open_system)."""
