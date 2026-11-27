@@ -1,6 +1,16 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Phase 9 integration/QA, version 0.8.0 build
+- The Current Folder is the working folder (as in MATLAB): the panel changes the process
+  folder, `cd folder` / `cd ..` / `cd('path')` and `pwd` are builtins, and a `FolderChanged`
+  kernel event moves the panel when a script runs `cd`.
+- QA tests: every example script runs clean (and full_feature_test.m reports no FAIL), docs
+  pages all linked and every toolbox function documented, all nine toolboxes listed, no
+  toolbox name hidden by a core builtin; tests restore the working folder.
+- Packaging: openpyxl bundled (Excel files in the frozen app); full_feature_test.m checks an
+  Excel round trip, so the frozen-app smoke run covers it. Version 0.8.0; README updated.
+
 ## 2026-11-27 - Phase 8 complete: engineering toolboxes
 - New toolboxes (each `toolboxes/<name>` with toolbox.toml, validated `@tb_function`s, tests):
   thermo, fluids, heat, electrical, materials, structures (2-D FEA: truss2d, frame2d,

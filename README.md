@@ -4,7 +4,7 @@ An offline, MATLAB-style desktop environment for engineering students, built wit
 Write `.m` scripts, run them with F5, and get MATLAB-like output, figures and tools — no
 licence server and no internet connection needed.
 
-> Student project, version 0.7.0. Not affiliated with or endorsed by The MathWorks, Inc.;
+> Student project, version 0.8.0. Not affiliated with or endorsed by The MathWorks, Inc.;
 > MATLAB is a trademark of The MathWorks, Inc.
 
 ## Features
@@ -31,12 +31,23 @@ licence server and no internet connection needed.
   parameter dialogs, Run/Stop and Scope windows; 34 blocks (sources, sinks, math, continuous,
   discrete, nonlinear, PID, transport delay, Fcn, subsystems); ode45/ode23/ode15s/ode113/RK4/
   Euler; `sim('model.esmodel')` from scripts.
-- **Mechanical Engineering toolbox:** sections, stress, Mohr's circle, von Mises, buckling,
-  beams, vibrations (SDOF, forced response, transmissibility, MDOF modes), springs, gears,
-  shafts, four-bar linkages.
+- **Engineering toolboxes (9 toolboxes, 85 functions):**
+  - *Mechanical:* sections, stress, Mohr's circle, von Mises, buckling, beams, vibrations (SDOF,
+    forced response, transmissibility, MDOF modes), springs, gears, shafts, four-bar linkages.
+  - *Thermodynamics, fluids, heat transfer:* ideal gas, processes, cycles, pipe flow and friction
+    factors, Bernoulli, pumps, drag, conduction/convection/radiation, fins, heat exchangers.
+  - *Electrical and electronics:* RLC, transients, impedance, AC and three-phase power, op-amps,
+    filters, diodes, 555 timer.
+  - *Materials and lab data:* property database, tensile-test analysis, fatigue, composites.
+  - *Structures and 2-D FEA:* trusses, frames, plane-stress plates (stress contour plots).
+  - *Robotics and aerospace:* DH kinematics, inverse kinematics, trajectories, standard
+    atmosphere, aircraft performance, rockets and orbits.
+- **Lab data files:** `readmatrix`, `readtable`, `writematrix`, `writetable` for CSV and
+  Excel; `cd`/`pwd` with the Current Folder as the working folder.
 
-Try `examples/full_feature_test.m` (137 self-checks across every feature), `examples/control_pid_example.m`,
-`examples/mechanical_example.m` and `examples/simulation_example.m` (with `examples/models`).
+Try `examples/full_feature_test.m` (self-checks across every feature) and the worked examples
+in `examples/`: control/PID, simulation (with `examples/models`), mechanical, thermo-fluids,
+electrical, FEA, lab data and robotics/aerospace.
 
 ## Install (Windows 10/11, 64-bit)
 
@@ -60,15 +71,15 @@ pip install -e .
 python -m engstudio.gui
 ```
 
-Tests: `python -m pytest -q` (about 2,450 tests) and `ruff check .`.
+Tests: `python -m pytest -q` (about 2,500 tests) and `ruff check .`.
 Build the app and installer: `.\packaging\build.ps1` then `.\packaging\make_installer.ps1`
 (needs Inno Setup 6 or 7).
 
 ## Project status
 
-Phases 1–7 are complete (architecture, foundation, math engine, scripting, plotting, control
-systems, block-diagram simulation) and the Mechanical Engineering toolbox is done. Planned:
-more toolboxes (thermo-fluids, heat transfer, electrical, structures, 2-D FEA).
+Phases 1–9 are complete (architecture, foundation, math engine, scripting, plotting, control
+systems, block-diagram simulation, engineering toolboxes, integration and QA); Phase 10
+(packaging) is in progress. Ideas for later: 3-D FEA, more plot types, MIMO control.
 Progress and design notes live in `docs/project/` (HANDOFF.md, TASKS.md, CHANGELOG.md).
 
 ## License notes

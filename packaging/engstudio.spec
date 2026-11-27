@@ -17,8 +17,9 @@ def _keep(name):
 
 
 # engstudio and the libraries that import modules by name at run time.
+# openpyxl: pandas imports it by name for Excel files (readmatrix/readtable/writematrix).
 hiddenimports = (collect_submodules("engstudio") + collect_submodules("control")
-                 + collect_submodules("pyqtgraph", filter=_keep))
+                 + collect_submodules("pyqtgraph", filter=_keep) + collect_submodules("openpyxl"))
 
 datas = [
     (str(ROOT / "src" / "engstudio" / "app" / "docs_pages"), "engstudio/app/docs_pages"),

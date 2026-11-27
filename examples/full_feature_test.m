@@ -370,6 +370,8 @@ pl = plate2d(0.2, 0.1, 0.01, 200e9, 0.3, 8, 4, 'left-roller', 'right', [50e6 0])
 [np, nf] = check(np, nf, 'atmosisa', abs(rhoisa - 1.225) < 1e-3 && abs(Tisa - 288.15) < 1e-9);
 writematrix([1 2; 3 4], 'ff_test.csv');
 [np, nf] = check(np, nf, 'writematrix/readmatrix', isequal(readmatrix('ff_test.csv'), [1 2; 3 4]));
+writematrix([5 6; 7 8], 'ff_test.xlsx');
+[np, nf] = check(np, nf, 'Excel write/read', isequal(readmatrix('ff_test.xlsx'), [5 6; 7 8]));
 
 %% Summary
 elapsed = toc;

@@ -1,6 +1,6 @@
 # HANDOFF
-Last updated: 2026-11-27, version 0.7.0: Phases 1-7 done, Mechanical toolbox done, P10a/P10b
-done (installer, GitHub). 2444 tests pass.
+Last updated: 2026-11-27, version 0.8.0: Phases 1-9 done (9 engineering toolboxes, lab data
+files, cd/pwd), P10a/P10b done (installer, GitHub). 2502 tests pass, numerics 170/170.
 Full history: CHANGELOG.md and TASKS.md. The long pre-Phase-5 handoff is in the backup zip
 `es_snapshot_before_P5_2.zip` (docs/project/HANDOFF.md).
 
@@ -24,7 +24,7 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 - The user's vibrations scripts (Code.m, Lab 3/5/6) run end to end with F5.
 - Run GUI: desktop shortcut, or `python -m engstudio.gui [file.m]` (single instance).
   `packaging/install_desktop.ps1` (re)creates shortcuts and Open with. Self-check script:
-  `examples/full_feature_test.m` (132 PASS lines, about 10 s); `examples/control_pid_example.m`.
+  `examples/full_feature_test.m` (PASS/FAIL lines, about 10 s); `examples/control_pid_example.m`.
 
 ## Release workflow (Phase 10)
 - GitHub: https://github.com/LA3zz/Engineering-Studio (branch main). Git = GitHub Desktop's
@@ -59,21 +59,19 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
   before closing editor tabs in fixtures. Qt's "Cannot find font directory" is harmless.
 
 ## Next task
-Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
-New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
-name to `toolboxes.BUILTIN`).
-Phase 7 is done (version 0.7.0): `sim` package (model, serialization, blocks*, compiler,
-runner, subsystems), `app/sim_bindings.py` (sim/open_system), `app/sim_service.py` and
-`gui/sim_editor.py`. Next: Phase 8 toolboxes (thermodynamics, fluids, heat transfer,
-electrical, structural/2-D FEA) following the mechanical pattern; then Phase 9 integration/QA.
-Attach: TASKS.md, `toolboxes/mechanical/__init__.py`, `app/toolbox_bindings.py`.
+Phase 10 wrap-up: publish the 0.8.0 release (with the user: GitHub Releases, tag v0.8.0, attach
+installer_output\EngineeringStudio-Setup-0.8.0.exe and its .sha256; 0.7.0 was built but never
+released) and the clean-PC test T2.7b (needs a second PC or a VM).
+Toolboxes: `toolboxes/<name>` packages (toolbox.toml, `__init__.py` register, `functions.py` with
+`@tb_function`); add the name to `toolboxes.BUILTIN`; `app/toolbox_bindings.py` binds them.
+Data files and cd/pwd: `app/file_bindings.py`. Every example runs in
+`tests/toolboxes/test_examples_run.py`; docs completeness in `tests/app/test_docs_pages.py`.
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
-performance (compile anonymous functions; `sum(x, 'all')`).
-## Known problems
+Phase 8 (3-D FEA, mesh import, modal FEA, steam tables, compressible flow); performance
+(compile anonymous functions; `sum(x, 'all')`).## Known problems
 - GUI test process sometimes aborts at Qt teardown (0xC0000409); a full single-process run
   hung twice on 2026-11-27 (not reproduced; folder-by-folder runs pass). faulthandler_timeout
   now prints the stack if it happens again.
-- GUI not yet in the PyInstaller spec; clean-PC test T2.7b pending (Phase 10).
-- Relative file names in saveas/print/exportgraphics use the process working folder, not the
-  Current Folder panel (no `cd`/`pwd` yet).
+- Clean-PC test T2.7b pending (Phase 10; needs a second PC or a VM).
+- `readtable` returns a struct of columns (no table class); `T.Properties` is not available.

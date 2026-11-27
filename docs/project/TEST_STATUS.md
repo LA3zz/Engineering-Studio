@@ -12,7 +12,7 @@ Last updated: 2026-11-27 (end of Phase 9, before the 0.8.0 build)
 | every example script runs clean | tests/toolboxes/test_examples_run.py | 10 scripts, incl. full_feature_test.m (no FAIL lines) |
 | docs complete, links resolve | tests/app/test_docs_pages.py | included above |
 | offline guard | tests/conftest.py | active for every test; working folder restored after each test |
-| frozen build smoke | packaging\build.ps1 | see Phase 10 entry below |
+| frozen build smoke (0.8.0) | packaging\build.ps1 | PASSED: app folder 313 MB, --version, --selftest (23 s, minimal PATH), full_feature_test.m 152/152 in the frozen app, GUI --smoke |
 | clean PC (no Python) | manual | NOT DONE (task T2.7b needs a second PC or VM) |
 
 Environment: Windows 11 (build 26300), Python 3.11.9. Run the non-GUI and GUI folders in

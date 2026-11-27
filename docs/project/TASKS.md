@@ -149,6 +149,9 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   [~] P10b (2026-11-27): GUI in the PyInstaller spec (EngineeringStudio.exe windowed +
   engstudio-console.exe), Inno Setup installer (per user, Open with, uninstaller, notices),
   Help > Check for Updates (GitHub Releases), README, GitHub repo LA3zz/Engineering-Studio;
+  [x] (2026-11-27) 0.8.0 build: frozen checks pass (self-test, GUI smoke, full_feature_test
+  152/152 incl. Excel and FEA), installer EngineeringStudio-Setup-0.8.0.exe (116 MB) copied to
+  Downloads\Apps; [ ] publish the 0.8.0 release with the user;
   [ ] clean-PC test T2.7b (needs a second PC or a VM)
 - Backlog: compile anonymous functions for ODE speed; sum/mean/... 'all' option; struct arrays.
 
