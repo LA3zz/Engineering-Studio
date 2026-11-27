@@ -30,6 +30,7 @@ from engstudio.app.kernel.protocol import (
     ExecutionFinished,
     FigureClosed,
     FigureUpdate,
+    OpenModel,
     Stdout,
     ToolboxFunction,
     ToolboxInfo,
@@ -37,6 +38,7 @@ from engstudio.app.kernel.protocol import (
     VariableInfo,
     WorkspaceSummary,
 )
+from engstudio.app.sim_bindings import sim_functions
 from engstudio.app.toolbox_bindings import toolbox_builtins
 from engstudio.core.diagnostics import Diagnostic
 from engstudio.core.errors import EngStudioError
@@ -121,6 +123,7 @@ _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
         "dcgain", "damp", "isstable", "stepinfo", "margin", "c2d", "tfdata", "zpkdata", "ssdata",
         "order", "isdt", "minreal", "step", "impulse", "initial", "lsim", "bode", "nyquist",
         "rlocus", "pzmap", "pidtune")),
+    "simulation": ("Simulation", ("sim", "open_system")),
     "random": ("Random numbers", ("rand", "randn", "randi", "randperm", "rng")),
     "timing": ("Timing", ("tic", "toc")),
     "plotting": ("Plotting", (
@@ -250,6 +253,9 @@ class InProcessKernelClient(KernelClient):
         install_control_plots(self._interp, self._figures)
         self._interp.functions.update(self._workspace_commands())
         self._toolbox_categories = self._install_toolboxes()
+        self._interp.functions.update(sim_functions(
+            self._interp, self._figures,
+            lambda path: self._deliver(OpenModel(self._host.request_id, path))))
         self._next_id = 1
         self._closed = False
         self._lock = threading.Lock()

@@ -113,7 +113,7 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] (2026-11-27) S9 nonlinear: Saturation, Dead Zone, Relay, Switch, MATLAB Function (handle)
   - [x] (2026-11-27) S10 control blocks: PID Controller (from control.lti), Transport Delay
   - [x] (2026-11-27) S11 subsystems (flatten in the compiler)
-  - [ ] S12 kernel integration: `sim('model.esmodel')`, results to workspace, scope figures
+  - [x] (2026-11-27) S12 kernel integration: `sim('model.esmodel')`, results to workspace, scope figures
   - [ ] S13 GUI canvas: block library, drag and drop, move/select/delete
   - [ ] S14 wiring: ports, lines, branching, routing
   - [ ] S15 block parameter dialogs

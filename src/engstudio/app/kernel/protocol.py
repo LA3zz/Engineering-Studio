@@ -112,7 +112,15 @@ class FigureClosed:
     number: int
 
 
+@dataclass(frozen=True)
+class OpenModel:
+    """The script asked to open a simulation model (``open_system``) in the editor."""
+
+    request_id: int
+    path: str
+
+
 Event = (
     Stdout | Diagnostics | WorkspaceSummary | ExecutionFinished | ToolboxList
-    | FigureUpdate | FigureClosed
+    | FigureUpdate | FigureClosed | OpenModel
 )
