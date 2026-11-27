@@ -49,6 +49,14 @@ class ParamSpec:
             if self.positive and not v > 0:
                 raise ValidationError(f"{where} must be positive")
             return v
+        if self.kind == "matrix":
+            try:
+                arr = np.atleast_2d(np.asarray(value, dtype=float))
+            except (TypeError, ValueError):
+                arr = np.array([[np.nan]])
+            if arr.ndim != 2 or arr.size == 0 or not np.all(np.isfinite(arr)):
+                raise ValidationError(f"{where} must be a matrix of finite numbers")
+            return arr
         if self.kind == "vector":
             try:
                 arr = np.atleast_1d(np.asarray(value, dtype=float))
@@ -80,6 +88,10 @@ class BlockImpl:
 
     def derivatives(self, t: float, x: np.ndarray, u: list[np.ndarray]) -> np.ndarray:
         return np.zeros(0)
+
+    def breakpoints(self, t0: float, t1: float) -> list[float]:
+        """Times in (t0, t1) where the output jumps; variable-step solvers stop there."""
+        return []
 
 
 @dataclass(frozen=True)

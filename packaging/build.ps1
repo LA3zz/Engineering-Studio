@@ -1,11 +1,12 @@
 # Build the Windows app folder (PyInstaller onedir) and run the packaging smoke tests.
-# Usage (venv active):  .\packaging\build.ps1      -> also writes build_log.txt in the project root
+# Usage (venv active):  .\packaging\build.ps1      -> also writes build\build_log.txt
 # Then make the installer:  .\packaging\make_installer.ps1
 # Native tools (PyInstaller) write normal progress to stderr, which Windows PowerShell 5.1 would
 # treat as errors; so every native call goes through cmd, which merges stderr into stdout.
 $ErrorActionPreference = "Continue"
 Set-Location (Split-Path $PSScriptRoot -Parent)
-$log = Join-Path (Get-Location) "build_log.txt"
+New-Item -ItemType Directory -Force build | Out-Null
+$log = Join-Path (Get-Location) "build\build_log.txt"
 Remove-Item $log -ErrorAction SilentlyContinue
 
 function Say([string]$text) { $text | Tee-Object -FilePath $log -Append | Out-Host }
@@ -14,7 +15,8 @@ function Invoke-Native([string]$commandLine) {
   return $LASTEXITCODE
 }
 
-Remove-Item -Recurse -Force build, "dist\EngineeringStudio" -ErrorAction SilentlyContinue
+Get-ChildItem build -Exclude build_log.txt -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
+Remove-Item -Recurse -Force "dist\EngineeringStudio" -ErrorAction SilentlyContinue
 
 Say "=== PyInstaller build ==="
 $rc = Invoke-Native "python -m PyInstaller packaging\engstudio.spec --noconfirm --clean --distpath dist --workpath build"
@@ -51,8 +53,8 @@ try {
   New-Item -ItemType Directory -Force $work | Out-Null
   Push-Location $work
   try {
-    $exe = Join-Path (Split-Path $log) "dist\EngineeringStudio\engstudio-console.exe"
-    $ff = Join-Path (Split-Path $log) "examples\full_feature_test.m"
+    $exe = Join-Path (Split-Path (Split-Path $log)) "dist\EngineeringStudio\engstudio-console.exe"
+    $ff = Join-Path (Split-Path (Split-Path $log)) "examples\full_feature_test.m"
     $out = cmd /c "`"$exe`" --run `"$ff`" 2>&1"
     $c3 = $LASTEXITCODE
     $out | Select-Object -Last 3 | ForEach-Object { Say $_ }

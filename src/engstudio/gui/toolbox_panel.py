@@ -86,13 +86,14 @@ class ToolboxPanel(QWidget):
                     child.setToolTip(0, tip)
                 top.addChild(child)
                 kids.append((child, fn.name.lower(), fn.summary.lower()))
-            top.setExpanded(True)
+            top.setExpanded(False)  # collapsed: click the arrow to see a toolbox's functions
             self._index.append((top, f"{tb.name} {tb.display_name}".lower(), kids))
         self.apply_filter()
 
     def apply_filter(self, text: str | None = None) -> None:
         """Show functions whose name or summary contains ``text`` (case-insensitive);
-        a match on the toolbox name shows all of its functions."""
+        a match on the toolbox name shows all of its functions. While filtering, toolboxes
+        with matches open; clearing the filter collapses them again."""
         needle = (self.filter_edit.text() if text is None else text).strip().lower()
         total = shown = 0
         for top, top_text, kids in self._index:
@@ -105,6 +106,7 @@ class ToolboxPanel(QWidget):
             total += len(kids)
             shown += visible
             top.setHidden(bool(needle) and visible == 0)
+            top.setExpanded(bool(needle) and visible > 0)
         if not self._index:
             self.status.setText("No toolboxes available.")
         elif needle:

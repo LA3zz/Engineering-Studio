@@ -8,7 +8,7 @@ Usage (project root, venv active):
     python tools\\validate_numerics.py            full report
     python tools\\validate_numerics.py -v         also show every passing check's details
     python tools\\validate_numerics.py -k ode     only groups/checks whose name contains 'ode'
-The report is also written to validation_report.txt. Exit code 1 if any check fails.
+The report is also written to docs/project/validation_report.txt. Exit code 1 if any check fails.
 """
 
 from __future__ import annotations
@@ -568,7 +568,8 @@ def main() -> int:
     if failures:
         report += "\nFAILED:\n" + "\n".join(f"  - {f}" for f in failures) + "\n"
     print(report)
-    Path("validation_report.txt").write_text(report, encoding="utf-8")
+    (Path(__file__).resolve().parents[1] / "docs" / "project" / "validation_report.txt").write_text(
+        report, encoding="utf-8")
     return 1 if failures else 0
 
 

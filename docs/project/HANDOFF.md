@@ -34,6 +34,9 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 - Publish: GitHub Releases, tag `v<version>`, attach the setup .exe and its .sha256.
 
 ## Conventions and gotchas
+- Project root holds only README, pyproject, requirements and folders; docs live in docs/project,
+  build logs in build/, one-off probe scripts in scripts/probes. Use absolute paths with
+  [IO.File] in PowerShell (.NET's current folder differs from PowerShell's).
 - PowerShell 5.1: write files UTF-8 without BOM ([IO.File]::WriteAllText + UTF8Encoding($false));
   `>` writes UTF-16. Wrap stderr-writing tools with `cmd /c "... 2>&1"`.
 - Delivery for the free chat: zip of new/changed files (Expand-Archive -Force at project root)
@@ -58,11 +61,13 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
 New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
 name to `toolboxes.BUILTIN`).
-Phase 7 S3: source blocks Step, Sine Wave, Ramp, Clock, Pulse Generator, From Workspace in
-`sim/blocks.py` (or `sim/blocks_sources.py`) using the S2 framework (BlockType, ParamSpec,
-BlockImpl.outputs(t, x, u)). S1 (model, .esmodel) and S2 (block framework + Constant, Gain, Sum,
-Product, Abs, MathFunction) are done. Plan S1-S17 in TASKS.md.
-Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `sim/blocks.py`.
+Phase 7 S4: continuous blocks Integrator (InitialCondition, optional limits), TransferFcn (Num,
+Den via control.lti or own realisation), StateSpace (A, B, C, D, X0), Derivative, in
+`sim/blocks_continuous.py`: BlockImpl with n_states, initial_state(), derivatives(t, x, u) and
+outputs(t, x, u); feedthrough False for strictly proper. Done: S1 model/.esmodel, S2 framework +
+math blocks, S3 sources (Step, SineWave, Ramp, Clock, PulseGenerator, FromWorkspace; blocks report
+breakpoints). Plan S1-S17 in TASKS.md.
+Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/blocks.py`, `sim/blocks_sources.py`.
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
 performance (compile anonymous functions; `sum(x, 'all')`).

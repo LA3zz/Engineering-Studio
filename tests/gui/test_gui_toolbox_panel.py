@@ -130,3 +130,18 @@ def test_main_window_integration():
         win.tabs.current_editor().document().setModified(False)
         win.close()
         win.deleteLater()
+
+
+def test_toolboxes_start_collapsed_and_filter_expands(qtbot):
+    from engstudio.app.kernel.protocol import ToolboxFunction, ToolboxInfo
+    from engstudio.gui.toolbox_panel import ToolboxPanel
+    panel = ToolboxPanel()
+    qtbot.addWidget(panel)
+    panel.populate([ToolboxInfo("a", "Alpha", (ToolboxFunction("sdof", "", ""),)),
+                    ToolboxInfo("b", "Beta", (ToolboxFunction("plot", "", ""),))])
+    tops = [panel.tree.topLevelItem(i) for i in range(2)]
+    assert not any(t.isExpanded() for t in tops)
+    panel.filter_edit.setText("sdof")
+    assert tops[0].isExpanded() and tops[1].isHidden()
+    panel.filter_edit.setText("")
+    assert not any(t.isExpanded() for t in tops) and not tops[1].isHidden()
