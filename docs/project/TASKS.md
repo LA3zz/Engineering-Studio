@@ -106,13 +106,13 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
     Product, Constant, Abs, Math Function
   - [x] (2026-11-27) S3 sources: Step, Sine Wave, Ramp, Clock, Pulse Generator, From Workspace
   - [x] (2026-11-27) S4 continuous: Integrator (initial condition, limits), Transfer Fcn, State-Space, Derivative
-  - [ ] S5 compiler: validation, topological sort, algebraic-loop error, state-vector layout
-  - [ ] S6 solver/runner: solve_ivp variable step + fixed-step RK4/Euler, cancel, progress
-  - [ ] S7 sinks: Scope (data), To Workspace, Display; analytic validation suite
-  - [ ] S8 discrete: Unit Delay, Zero-Order Hold, Discrete TF; hybrid scheduling
-  - [ ] S9 nonlinear: Saturation, Dead Zone, Relay, Switch, MATLAB Function (handle)
-  - [ ] S10 control blocks: PID Controller (from control.lti), Transport Delay
-  - [ ] S11 subsystems (flatten in the compiler)
+  - [x] (2026-11-27) S5 compiler: validation, topological sort, algebraic-loop error, state-vector layout
+  - [x] (2026-11-27) S6 solver/runner: solve_ivp variable step + fixed-step RK4/Euler, cancel, progress
+  - [x] (2026-11-27) S7 sinks: Scope (data), To Workspace, Display; analytic validation suite
+  - [x] (2026-11-27) S8 discrete: Unit Delay, Zero-Order Hold, Discrete TF; hybrid scheduling
+  - [x] (2026-11-27) S9 nonlinear: Saturation, Dead Zone, Relay, Switch, MATLAB Function (handle)
+  - [x] (2026-11-27) S10 control blocks: PID Controller (from control.lti), Transport Delay
+  - [x] (2026-11-27) S11 subsystems (flatten in the compiler)
   - [ ] S12 kernel integration: `sim('model.esmodel')`, results to workspace, scope figures
   - [ ] S13 GUI canvas: block library, drag and drop, move/select/delete
   - [ ] S14 wiring: ports, lines, branching, routing

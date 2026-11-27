@@ -42,6 +42,15 @@ def _param_in(v: object) -> object:
     return v
 
 
+def _block_out(b: Block) -> dict:
+    d = {"id": b.id, "type": b.type, "name": b.name,
+         "params": {k: _param_out(v) for k, v in b.params},
+         "position": list(b.position), "size": list(b.size)}
+    if b.subsystem is not None:
+        d["subsystem"] = to_dict(b.subsystem)
+    return d
+
+
 def to_dict(model: Model) -> dict:
     s = model.settings
     return {
@@ -51,9 +60,7 @@ def to_dict(model: Model) -> dict:
         "settings": {"start_time": s.start_time, "stop_time": s.stop_time, "solver": s.solver,
                      "rel_tol": s.rel_tol, "abs_tol": s.abs_tol, "max_step": _num(s.max_step),
                      "fixed_step": s.fixed_step},
-        "blocks": [{"id": b.id, "type": b.type, "name": b.name,
-                    "params": {k: _param_out(v) for k, v in b.params},
-                    "position": list(b.position), "size": list(b.size)} for b in model.blocks],
+        "blocks": [_block_out(b) for b in model.blocks],
         "lines": [{"src": ln.src, "src_port": ln.src_port, "dst": ln.dst,
                    "dst_port": ln.dst_port, "points": [list(p) for p in ln.points]}
                   for ln in model.lines],
@@ -78,7 +85,8 @@ def from_dict(data: dict) -> Model:
         blocks = tuple(Block(id=b["id"], type=b["type"], name=b.get("name", ""),
                              params={k: _param_in(v) for k, v in b.get("params", {}).items()},
                              position=tuple(b.get("position", (0, 0))),
-                             size=tuple(b.get("size", (60, 40))))
+                             size=tuple(b.get("size", (60, 40))),
+                             subsystem=from_dict(b["subsystem"]) if "subsystem" in b else None)
                        for b in data.get("blocks", []))
         lines = tuple(Line(ln["src"], int(ln["src_port"]), ln["dst"], int(ln["dst_port"]),
                            tuple(tuple(p) for p in ln.get("points", [])))

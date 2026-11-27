@@ -24,7 +24,7 @@ from engstudio.core.errors import ValidationError
 from engstudio.sim.model import Block
 
 __all__ = ["BLOCK_TYPES", "BlockImpl", "BlockType", "ParamSpec", "block_type", "feedthrough",
-           "ports", "register", "resolve"]
+           "ports", "register", "register_ports_hook", "resolve"]
 
 KINDS = ("source", "algebraic", "continuous", "discrete", "sink")
 
@@ -73,12 +73,37 @@ class ParamSpec:
 
 
 class BlockImpl:
-    """Runtime behaviour of one block instance (subclasses override what they need)."""
+    """Runtime behaviour of one block instance (subclasses override what they need).
+
+    Discrete blocks set ``sample_time`` (seconds); at every multiple of it the runner calls
+    ``sample(t, u)`` before evaluating outputs (for blocks that pass the new input straight
+    through, e.g. Zero-Order Hold) and ``update(t, u)`` after all outputs (state update, e.g.
+    Unit Delay). Blocks with internal memory (Relay, Transport Delay) use ``after_step`` (called
+    after every accepted solver step) and expose ``memory()``/``restore()`` so logged outputs
+    can be recomputed exactly.
+    """
 
     n_states = 0
+    sample_time: float | None = None
 
     def __init__(self, p: dict[str, object]) -> None:
         self.p = p
+
+    def sample(self, t: float, u: list[np.ndarray]) -> None:
+        """Discrete blocks: called at a sample hit before outputs are evaluated."""
+
+    def update(self, t: float, u: list[np.ndarray]) -> None:
+        """Discrete blocks: called at a sample hit after all outputs (state update)."""
+
+    def after_step(self, t: float, x: np.ndarray, u: list[np.ndarray]) -> None:
+        """Called after every accepted solver step (memory blocks)."""
+
+    def memory(self) -> object:
+        """Snapshot of internal (non-continuous) state, or None."""
+        return None
+
+    def restore(self, snapshot: object) -> None:
+        """Return to a ``memory()`` snapshot."""
 
     def initial_state(self) -> np.ndarray:
         return np.zeros(self.n_states)
@@ -151,8 +176,18 @@ def feedthrough(block: Block) -> bool:
     return bool(ft(resolve(block))) if callable(ft) else bool(ft)
 
 
+_PORT_HOOKS: dict[str, Callable[[Block], tuple[int, int]]] = {}
+
+
+def register_ports_hook(type_name: str, fn: Callable[[Block], tuple[int, int]]) -> None:
+    """Port counts computed from the block itself (Subsystem: from its inner model)."""
+    _PORT_HOOKS[type_name] = fn
+
+
 def ports(block: Block) -> tuple[int, int]:
     """(inputs, outputs) of ``block``."""
+    if block.type in _PORT_HOOKS:
+        return _PORT_HOOKS[block.type](block)
     bt = block_type(block.type)
     p = resolve(block)
     return bt.n_inputs(p), bt.n_outputs(p)

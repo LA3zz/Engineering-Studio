@@ -98,6 +98,8 @@ class _StateSpaceImpl(BlockImpl):
         return v
 
     def outputs(self, t, x, u):
+        if not u:  # not direct feedthrough (D = 0): the runner passes no input here
+            return [self.C @ x]
         return [self.C @ x + self.D @ self._u(u)]
 
     def derivatives(self, t, x, u):

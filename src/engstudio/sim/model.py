@@ -51,6 +51,7 @@ class Block:
     params: tuple[tuple[str, ParamValue], ...] = ()
     position: tuple[float, float] = (0.0, 0.0)
     size: tuple[float, float] = (60.0, 40.0)
+    subsystem: Model | None = None  # inner model of a 'Subsystem' block
 
     def __post_init__(self) -> None:
         if not _ID.match(self.id):
@@ -71,6 +72,9 @@ class Block:
             object.__setattr__(self, what, (a, b))
         if self.size[0] <= 0 or self.size[1] <= 0:
             raise ValidationError(f"block {self.id}: size must be positive")
+        if (self.type == "Subsystem") != (self.subsystem is not None):
+            raise ValidationError(f"block {self.id}: a Subsystem block needs an inner model "
+                                  "and only Subsystem blocks have one")
 
     def param(self, name: str, default: object = None) -> object:
         for k, v in self.params:
