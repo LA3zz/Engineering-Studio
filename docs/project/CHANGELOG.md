@@ -1,6 +1,12 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Version 0.8.1 (built on Python 3.14; not released yet)
+- The app is built and packaged with Python 3.14 (3.11 still supported from source): all tests
+  pass, frozen self-test 16 s instead of 23 s, full_feature_test about 12 % faster.
+- Includes the call tips, Toolbox details pane, `help` command, the sharp start-up splash
+  and the user manual (docs/manual, also copied next to the installer).
+
 ## 2026-11-27 - User manual (PDF)
 - `docs/manual/Engineering_Studio_User_Manual.pdf`: install/update, desktop and panels, call
   tips, language, mathematics, plotting, control, simulation (editor, settings, tutorial,

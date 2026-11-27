@@ -4,7 +4,7 @@ An offline, MATLAB-style desktop environment for engineering students, built wit
 Write `.m` scripts, run them with F5, and get MATLAB-like output, figures and tools — no
 licence server and no internet connection needed.
 
-> Student project, version 0.8.0. Not affiliated with or endorsed by The MathWorks, Inc.;
+> Student project, version 0.8.1. Not affiliated with or endorsed by The MathWorks, Inc.;
 > MATLAB is a trademark of The MathWorks, Inc.
 
 ## Features

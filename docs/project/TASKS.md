@@ -152,6 +152,8 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   [x] (2026-11-27) 0.8.0 build: frozen checks pass (self-test, GUI smoke, full_feature_test
   152/152 incl. Excel and FEA), installer EngineeringStudio-Setup-0.8.0.exe (116 MB) copied to
   Downloads\Apps; [ ] publish the 0.8.0 release with the user;
+  [x] (2026-11-27) 0.8.1 built on Python 3.14 (frozen checks 152/152, self-test 16 s),
+  installer + user manual copied to Downloads\Apps; not released yet (release stays 0.8.0);
   [ ] clean-PC test T2.7b (needs a second PC or a VM)
 - [x] (2026-11-27) Function help for every command: Toolbox details pane, `help name`, call tips
   while typing (editor and Command Window)
