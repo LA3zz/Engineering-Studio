@@ -65,7 +65,8 @@ class UpdateChecker(QObject):
         if reply.error() != QNetworkReply.NetworkError.NoError:
             status, detail = "error", reply.errorString()
             if reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute) == 404:
-                status, detail = "current", "No release has been published yet."
+                status, detail = "error", ("no public release found (the release page may be "
+                                           "private or not published yet)")
         else:
             try:
                 tag, url = parse_release(bytes(reply.readAll()))
