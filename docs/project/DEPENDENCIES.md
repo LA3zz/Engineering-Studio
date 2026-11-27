@@ -1,10 +1,10 @@
 # DEPENDENCIES
-Versions pinned 2026-11-18 (Python 3.11.9). Full transitive freeze: `requirements.lock.txt` (UTF-8). Table of direct dependencies at the end of this file.
+Versions pinned 2026-11-18; same pins used on Python 3.14.10 since 2026-11-28 (all have cp314 or abi3 wheels). Full transitive freeze: `requirements.lock.txt` (UTF-8). Table of direct dependencies at the end of this file.
 
 ## Runtime
 | Package | Layer/use | License (verify at pin time) | Notes |
 |---|---|---|---|
-| Python 3.11 (64-bit) | all | PSF | pinned minor version |
+| Python 3.14 (64-bit) | all | PSF | 3.11 also supported (old venv kept as .venv311) |
 | numpy | L0+ | BSD | |
 | scipy | engine, sim | BSD | large; lazy-import |
 | sympy | engine.symbolic | BSD | slow import; lazy |

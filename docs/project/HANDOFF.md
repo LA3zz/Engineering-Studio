@@ -8,7 +8,7 @@ Full history: CHANGELOG.md and TASKS.md. The long pre-Phase-5 handoff is in the 
 Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in "Next task".
 
 ## State
-- Project: C:\Users\ma704\Downloads\EngineeringStudio, venv `.venv`, Python 3.11.9, Windows.
+- Project: C:\Users\ma704\Downloads\EngineeringStudio, venv `.venv`, Python 3.14.10 (old 3.11.9 venv kept as `.venv311`), Windows.
 - Done: engine (E1-E12: linalg, decomp, calculus, roots, interp, regression, optimize, stats,
   ode, transforms, symbolic, uncertainty), interpreter (lexer, parser, evaluator, functions,
   control flow, ~300 builtins), in-process kernel (worker thread, Stop, F5/F9), GUI (Command

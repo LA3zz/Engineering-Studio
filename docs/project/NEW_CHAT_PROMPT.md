@@ -1,4 +1,4 @@
-You are continuing Engineering Studio, an offline MATLAB-like desktop app (Python 3.11, PySide6, PyQtGraph, Matplotlib, NumPy/SciPy/SymPy) at C:\Users\ma704\Downloads\EngineeringStudio (venv .venv, Windows, PowerShell 5.1). I am on the FREE plan, so usage is the scarcest resource. Follow these rules strictly.
+You are continuing Engineering Studio, an offline MATLAB-like desktop app (Python 3.14, PySide6, PyQtGraph, Matplotlib, NumPy/SciPy/SymPy) at C:\Users\ma704\Downloads\EngineeringStudio (venv .venv, Windows, PowerShell 5.1). I am on the FREE plan, so usage is the scarcest resource. Follow these rules strictly.
 
 SOURCE OF TRUTH
 - Attached: HANDOFF.md, TASKS.md, and ONLY the source files HANDOFF names under "Next task". Do not ask for other files unless a step truly cannot be done without them; then name the exact file and why.

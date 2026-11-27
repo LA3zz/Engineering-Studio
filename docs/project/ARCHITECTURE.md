@@ -159,7 +159,7 @@ Coverage target for `engine` and `lang`: ≥90% lines (reported, not gamed). Eve
 ## 13. Decision log
 | ID | Decision | Consequence |
 |---|---|---|
-| D1 | Python 3.11 | Revisit 3.12 after dependency check |
+| D1 | Python 3.14 (since 2026-11-28; 3.11 still works) | All pinned libraries have 3.14 wheels; tests and frozen build pass |
 | D2 | Kernel in separate process | Serialization cost; robust Stop; workspace summaries only |
 | D3 | Handwritten Pratt parser | Full control of MATLAB quirks; more code to test |
 | D4 | Plot specs as data | GUI-agnostic plots; renderer parity tests needed |

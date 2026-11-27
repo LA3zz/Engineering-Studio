@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "engstudio"
 description = "Engineering Studio - offline engineering computation environment"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.11"  # developed and packaged on 3.14; 3.11 still supported
 dynamic = ["version"]
 dependencies = [
     "numpy", "scipy", "sympy", "pandas", "matplotlib",
