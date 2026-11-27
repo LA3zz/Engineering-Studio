@@ -407,4 +407,9 @@ CORE_HELP: dict[str, tuple[str, str]] = {
     "whos": ("whos", "List variables with size and class."),
     "exist": ("exist('name')", "1 for a variable, 2 for a file, 5 for a function, else 0."),
     "help": ("help name", "Show how to call a function and what its inputs mean."),
+    "save": ("save | save file | save file x y | save('results.mat', 'x', 'y')",
+             "Save variables to a MATLAB .mat file (default matlab.mat in the working folder)."),
+    "load": ("load | load file | load file x | S = load('results.mat')",
+             "Load variables from a .mat file (also files made by MATLAB); with an output, "
+             "return them as a struct."),
 }

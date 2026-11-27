@@ -88,7 +88,8 @@ be called, with the input you are typing in <b><u>bold underline</u></b> (see
 <h2 id="editor">Script editor and running scripts</h2>
 <p>Scripts are plain text <code>.m</code> files. The editor has tabs, syntax highlighting (keywords,
 comments including <code>%{ ... %}</code> blocks, strings and numbers) and asks before closing a
-tab with unsaved changes.</p>
+tab with unsaved changes. Scripts that are open when you exit reopen at the next start
+(untitled scripts are not kept).</p>
 <table>
 <tr><th>Action</th><th>Key</th><th>What happens</th></tr>
 <tr><td>Run Script</td><td>F5</td><td>Saves nothing automatically; runs the whole script in the current tab. File names in the script are also looked up in the script's own folder.</td></tr>
@@ -122,8 +123,10 @@ press Esc.</p>
 
 <h2 id="panels">Workspace, Current Folder, Toolboxes, Diagnostics</h2>
 <p><b>Workspace</b> lists every variable with its class, size and a short preview. Click a column
-header to sort, type in the filter box to narrow the list, press <b>Clear</b> to delete all
-variables, and double-click a row to display the variable in the Command Window.</p>
+header to sort, type in the filter box to narrow the list, and double-click a row to display the
+variable in the Command Window. Right-click for <b>Clear Selected</b> and <b>Clear All</b>.
+<b>Save...</b> writes the selected variables (or all) to a MATLAB <code>.mat</code> file and
+<b>Load...</b> reads one back; see <a href="#save-load">Saving and loading variables</a>.</p>
 <p><b>Current Folder</b> shows the working folder. Use <b>Up</b>, <b>Browse</b>, or type a path and
 press Enter. Double-click a folder to enter it, a <code>.m</code> file to open it in the editor, or a
 <code>.esmodel</code> file to open it in the model editor. The Current Folder <i>is</i> the working
@@ -474,6 +477,28 @@ writetable(T, 'manual_demo.csv');
 back = readtable('manual_demo.csv');
 M = readmatrix('manual_demo.csv')     % header row skipped
 p = polyfit(back.time, back.load, 1)  % stiffness from a straight-line fit</pre>
+<h2 id="save-load">Saving and loading variables (.mat files)</h2>
+<p><code>save</code> and <code>load</code> use MATLAB's own <code>.mat</code> format, so files can be exchanged
+with MATLAB in both directions (numbers, complex numbers, text, cell arrays and structs).</p>
+<table>
+<tr><th>Command</th><th>Effect</th></tr>
+<tr><td><code>save</code></td><td>All variables to <code>matlab.mat</code> in the working folder.</td></tr>
+<tr><td><code>save results</code> / <code>save('results.mat')</code></td><td>All variables to <code>results.mat</code>.</td></tr>
+<tr><td><code>save results x y</code> / <code>save('results', 'x', 'y')</code></td><td>Only <code>x</code> and <code>y</code>.</td></tr>
+<tr><td><code>load results</code></td><td>Puts every variable of the file into the workspace.</td></tr>
+<tr><td><code>load results x</code></td><td>Only <code>x</code>.</td></tr>
+<tr><td><code>S = load('results.mat')</code></td><td>Returns the variables as fields of a struct instead.</td></tr>
+</table>
+<pre class="m">E = 200e9; nu = 0.3; label = 'steel';
+save manual_props E nu label
+clear
+load manual_props
+S = load('manual_props.mat');
+disp(S.label)</pre>
+<p>Logical arrays are stored as numbers and come back as 0/1 values. Function handles, symbolic
+expressions and control systems cannot be stored; <code>save</code> skips them with a warning.
+Integer data from MATLAB files loads as ordinary numbers.</p>
+
 <p>The worked example <code>examples/lab_data_example.m</code> reads a tensile test
 (<code>examples/data/tensile_test.csv</code>), finds E, the 0.2 % yield strength and the ultimate
 strength with <code>tensile_test</code>, plots the curve and saves a summary table.</p>

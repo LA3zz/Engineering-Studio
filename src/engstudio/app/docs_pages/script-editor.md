@@ -1,7 +1,8 @@
 # Script editor
 
 Tabbed editor for `.m` scripts: Ctrl+N new, Ctrl+O open, Ctrl+S save, Ctrl+Shift+S save as,
-Ctrl+W close. Unsaved changes prompt before closing. Keywords, comments (including `%{ ... %}`
+Ctrl+W close. Unsaved changes prompt before closing. Scripts that are open when you exit reopen at the next
+start (untitled scripts are not kept). Keywords, comments (including `%{ ... %}`
 block comments), strings and numbers are highlighted in both themes.
 
 ## Running

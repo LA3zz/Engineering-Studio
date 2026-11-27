@@ -42,6 +42,7 @@ from engstudio.app.kernel.protocol import (
 )
 from engstudio.app.sim_bindings import sim_functions
 from engstudio.app.toolbox_bindings import toolbox_builtins
+from engstudio.app.workspace_files import workspace_file_functions
 from engstudio.core.diagnostics import Diagnostic
 from engstudio.core.errors import EngStudioError
 from engstudio.lang.builtins_analysis import install_analysis
@@ -66,7 +67,7 @@ FIGURE_INTERVAL = 1 / 30  # seconds between updates of one figure (animation thr
 
 _COMMAND = re.compile(
     r"^(\s*)(clear|clearvars|clc|format|more|close|syms|hold|figure|clf|cla|drawnow|grid|axis|"
-    r"legend|box|shading|colorbar|colormap|help)"
+    r"legend|box|shading|colorbar|colormap|help|save|load)"
     r"((?:[ \t]+[A-Za-z_][\w.*]*)*)[ \t]*(?:([;,])[ \t]*(.*)|(%.*))?$"
 )
 
@@ -143,13 +144,13 @@ _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
         "shading", "polarplot", "errorbar", "xline", "yline", "pause", "animatedline",
         "addpoints", "clearpoints", "saveas", "print", "exportgraphics")),
     "workspace": ("Workspace", ("clear", "clearvars", "clc", "format", "more", "who", "whos",
-                                "exist", "help")),
+                                "exist", "help", "save", "load")),
 }
 
 
 _MIDLINE_WORDS = frozenset(
     ("hold", "figure", "clf", "cla", "drawnow", "close", "grid", "axis", "legend", "box", "shading",
-     "colorbar", "colormap"))
+     "colorbar", "colormap", "save", "load", "help"))
 
 
 def _separators(line: str) -> list[int]:
@@ -271,6 +272,8 @@ class InProcessKernelClient(KernelClient):
 
         self._interp.functions.update(file_functions(self._script_dir, folder_changed,
                                                      self._host.write))
+        self._interp.functions.update(workspace_file_functions(self._interp, self._host.write,
+                                                               self._script_dir))
         self._toolbox_categories = self._install_toolboxes()
         self._interp.functions.update(sim_functions(
             self._interp, self._figures,

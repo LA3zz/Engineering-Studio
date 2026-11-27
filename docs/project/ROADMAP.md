@@ -1,22 +1,35 @@
 # ROADMAP
-Each phase = several independently testable tasks (see TASKS.md). Do not start a phase without approval.
+Status 2026-11-27: version 0.8.1 released (GitHub Releases, latest). Phases 1-9 done, Phase 10
+done except the clean-PC test T2.7b (deferred). Details per milestone: TASKS.md.
 
-| Phase | Name | Exit criteria |
+The original 13-phase plan (Phase 1 design) was re-sequenced on 2026-11-20 into the order the
+user's phase prompts followed:
+
+| Phase | Name | Status |
 |---|---|---|
-| 1 | Architecture & docs | Docs approved. **DONE** |
-| 2 | Foundation + packaging spike | Repo scaffold; `core` (errors, diagnostics, units, registry); architecture test; pytest green; frozen "hello" exe runs on a machine without Python, incl. multiprocessing |
-| 3 | Interpreter core (headless) | Lexer, parser, evaluator: expressions, matrices, indexing, builtins basic; conformance tests |
-| 4 | Kernel + minimal GUI | Kernel process + protocol; main window, Command Window, Workspace browser, history; Stop works |
-| 5 | Language completion + editor | Control flow, functions, anonymous functions; Script Editor tabs, run, error panel; Current Folder |
-| 6 | Plotting | `FigureSpec` model, figure windows (PyQtGraph), Matplotlib export, core plot commands |
-| 7 | Engine breadth | calculus, solvers, ODE, interpolation, regression, optimization, stats, FFT, symbolic; validation suite |
-| 8 | Toolbox framework + control | Manifest loader, toolbox browser, docs hook; `control` package; control/PID toolbox |
-| 9 | Simulation engine (headless) | Model, compiler, solvers, core blocks, scopes data, save/load, validation vs analytic |
-| 10 | Simulation editor GUI | Canvas, drag/drop, wiring, parameters dialogs, run/scope |
-| 11 | Foundational toolboxes | Math, mechanical, electrical, electronics, signals, thermo, fluids, heat, materials, structural, optimization, data, robotics, aerospace (basic) |
-| 12 | Docs, themes, projects, polish | Documentation panel, search, layouts, themes, project management |
-| 13 | Installer & release | Inno Setup installer, clean-VM test, license notices |
+| 1 | Architecture & docs | Done |
+| 2 | Foundation + packaging spike | Done (T2.7b clean-PC check deferred) |
+| G | GUI shell (G1-G7): panels, command window, workspace, folder, toolbox browser, editor, figures, diagnostics, docs, themes | Done |
+| 3 | Math engine (E1-E12): linalg, calculus, roots, interpolation, regression, optimisation, stats, ODE, FFT, symbolic, uncertainty | Done |
+| 4 | Scripting: lexer, parser, interpreter, builtins, kernel, Run/F5 | Done |
+| 5 | Plotting commands (2-D, 3-D, animation, export) | Done |
+| 6 | Control systems and PID | Done |
+| 7 | Block-diagram simulation (engine + editor GUI) | Done |
+| 8 | Engineering toolboxes (9 toolboxes, 85 functions) + lab data files | Done |
+| 9 | Integration and QA (examples in tests, Current Folder = working folder, docs checks) | Done |
+| 10 | Packaging and release: installer, GitHub, update check, Python 3.14, manual | Done (T2.7b open) |
+| Extras | Function help + call tips, user manual PDF, splash, save/load workspace, restore tabs | Done |
 
-Re-sequencing note: packaging is validated in Phase 2 (risk R2) and re-checked at the end of every phase via the smoke build.
+## Possible next steps (not scheduled; pick with the user)
+- Feedback from the first users of 0.8.1 (bugs first).
+- Clean-PC test T2.7b on a second PC or VM.
+- Plotting backlog: yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
+  getframe/movie, Window menu.
+- Control backlog: MIMO responses, time delays, discrete PID, pidTuner-style app.
+- Language backlog: struct arrays, `format long`, multi-output `unique`, generalized `eig`,
+  `sum(x, 'all')`, faster anonymous functions in ODE loops.
+- Toolbox backlog: 3-D FEA, mesh import, modal FEA, steam tables, compressible flow.
+- User toolboxes folder (load extra toolboxes from `%APPDATA%`).
 
-Status 2026-11-18: Phase 1 done. Phase 2 done except T2.7b (manual clean-PC check). Phase 3 awaits approval.
+Rule kept from Phase 1: one milestone at a time; every phase ends with tests, docs, a commit
+and a backup zip.

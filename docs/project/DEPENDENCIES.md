@@ -6,16 +6,16 @@ Versions pinned 2026-11-18; same pins used on Python 3.14.10 since 2026-11-28 (a
 |---|---|---|---|
 | Python 3.14 (64-bit) | all | PSF | 3.11 also supported (old venv kept as .venv311) |
 | numpy | L0+ | BSD | |
-| scipy | engine, sim | BSD | large; lazy-import |
+| scipy | engine, sim, app.workspace_files (scipy.io .mat) | BSD | large; lazy-import |
 | sympy | engine.symbolic | BSD | slow import; lazy |
-| pandas | data | BSD | lazy |
+| pandas | app.file_bindings (readmatrix/readtable/write*) | BSD | lazy |
 | matplotlib | plotting.export | PSF-based | Agg only, no Qt backend in kernel |
 | pyqtgraph | gui.plots | MIT | |
 | PySide6 | gui | LGPL-3 | dynamic linking via onedir; ship license text |
-| pyvista (+ pyvistaqt, vtk) | gui.plots3d | MIT/BSD | **optional**, added only in 3D task |
+| pyvista (+ pyvistaqt, vtk) | - | MIT/BSD | not used: 3-D plots use embedded Matplotlib |
 | control (python-control) | control | BSD | |
-| openpyxl | data | MIT | |
-| sqlite3 | data | stdlib | |
+| openpyxl | Excel files via pandas (hidden import in the spec) | MIT | |
+| sqlite3 | - | stdlib | not used (UI settings are JSON) |
 
 ## Development / build
 | Package | Use |
@@ -23,7 +23,8 @@ Versions pinned 2026-11-18; same pins used on Python 3.14.10 since 2026-11-28 (a
 | pyinstaller | packaging |
 | pytest, pytest-qt, pytest-cov | testing |
 | ruff | lint/format |
-| Inno Setup (external tool) | installer, not a Python dep |
+| Inno Setup 6 (external tool) | installer, not a Python dep |
+| Microsoft Edge (external) | prints the user manual PDF (tools/make_manual.py) |
 
 ## Policy
 - New dependency requires written justification in this file and an ARCHITECTURE.md note.

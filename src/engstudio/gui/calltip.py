@@ -170,7 +170,8 @@ class CallTipController(QObject):
         self._widget = widget
         self._catalog = catalog if catalog is not None else CATALOG
         self._above = above
-        self.label = QLabel(None, Qt.WindowType.ToolTip)
+        # Owned by the widget (deleted with it) but shown as its own tool-tip window.
+        self.label = QLabel(widget, Qt.WindowType.ToolTip)
         self.label.setTextFormat(Qt.TextFormat.RichText)
         self.label.setWordWrap(False)  # forms stay on one line; descriptions wrap at 90
         self.label.setMargin(6)
@@ -192,7 +193,6 @@ class CallTipController(QObject):
         else:
             raise TypeError("call tips need a QPlainTextEdit or a QLineEdit")
         widget.installEventFilter(self)
-        widget.destroyed.connect(self.label.deleteLater)
 
     def refresh(self) -> None:
         if not self._widget.hasFocus():

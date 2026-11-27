@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
         known = isinstance(saved, str) and (saved in THEMES or saved in self.custom_themes)
         self.set_theme(saved if known else "light", save=False)
         self._restore_window()
+        self.tabs.restore_session(self.settings.get("open_scripts"))  # scripts open last time
 
     # -- construction ----------------------------------------------------------
     def _create_docks(self) -> None:
@@ -337,6 +338,7 @@ class MainWindow(QMainWindow):
             return
         if self.command_window is not None:
             self.settings.set("command_history", self.command_window.history.items())
+        self.settings.set("open_scripts", self.tabs.session())
         self._save_window()
         if self.bridge is not None:
             self.bridge.shutdown()

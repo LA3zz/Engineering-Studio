@@ -1,6 +1,10 @@
 # PROJECT_SPEC — Engineering Studio (working name)
 
-Status: Phase 1 (architecture) complete. Version of this doc: 1.0
+Status: Version of this doc: 1.0 (Phase 1 design). As built (2026-11-27, app 0.8.1): the
+scope below is delivered, and some "later/out of scope" items were approved and built: 2-D FEA
+(structures toolbox), aerospace toolbox, 3-D plots and animation, simulation subsystems, struct
+and cell support, save/load in MATLAB .mat format (not .esmat), JSON UI settings (not SQLite),
+no project files yet. See ARCHITECTURE.md (as built) and ROADMAP.md.
 
 ## 1. Goal
 Offline Windows desktop engineering environment inspired by MATLAB/Simulink workflow: command window, workspace, script editor, plotting, toolboxes, block-diagram simulation. No cloud, no API keys, no internet for normal operation. No MATLAB/Simulink branding or assets. No claim of full MATLAB compatibility.

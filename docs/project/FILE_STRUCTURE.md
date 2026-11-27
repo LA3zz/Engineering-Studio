@@ -1,4 +1,6 @@
-# FILE_STRUCTURE (target; folders created in T2.1)
+# FILE_STRUCTURE
+The tree below is the Phase 1 target; the "As built" section at the end lists what really exists
+(newest additions last). `docs/project/API_REFERENCE.md` (generated) lists every module.
 ```
 EngineeringStudio/
 ├─ pyproject.toml
@@ -201,3 +203,31 @@ Rules: no module in `src` over ~600 lines without review; one responsibility per
 - examples/{thermo_fluids,electrical,fea,lab_data,robotics_aero}_example.m, examples/data/tensile_test.csv
 - tests/toolboxes/test_{thermofluids,electrical,materials_files,structures,robotics_aero,toolbox_kernel,examples_run}.py
 - tests/app/test_kernel_cd.py, tests/app/test_docs_pages.py
+
+## Added after Phase 9 (2026-11-27)
+- src/engstudio/app/help_core.py, help_toolbox.py, function_help.py - help for every command
+- src/engstudio/app/workspace_files.py - `save` / `load` (.mat)
+- src/engstudio/gui/calltip.py - call tips while typing; gui/splash.py - start-up splash
+- docs/manual/chapters.html + tools/make_manual.py -> docs/manual/Engineering_Studio_User_Manual.pdf
+- tools/make_api_reference.py -> docs/project/API_REFERENCE.md
+- scripts/probes/bench_python.py - Python version benchmark
+- tests/app/test_function_help.py, test_manual.py, test_workspace_files.py, test_kernel_cd.py,
+  test_docs_pages.py; tests/gui/test_calltip.py, test_splash.py, test_workspace_save_load.py,
+  test_restore_tabs.py
+
+## As built: top level
+```
+EngineeringStudio/
+  README.md  pyproject.toml  requirements.lock.txt  .gitignore
+  src/engstudio/   core/ engine/ control/ data/ plotting/ lang/ sim/ toolboxes/ app/ gui/
+                   version.py  selftest.py  __main__.py
+  tests/           unit/ architecture/ conformance/ engine/ lang/ app/ gui/ sim/ toolboxes/ ...
+  examples/        *.m (feature test + worked examples), models/*.esmodel, data/*.csv
+  docs/project/    project docs (this folder);  docs/manual/  user manual source + PDF
+  packaging/       engstudio.spec, entry*.py, build.ps1, make_installer.ps1, installer.iss,
+                   install_desktop.ps1
+  tools/           make_manual.py, make_api_reference.py, make_example_models.py,
+                   validate_numerics.py, third_party_notices.py
+  scripts/probes/  one-off measurement scripts
+  .venv (Python 3.14), .venv311 (old 3.11), build/, dist/, installer_output/ (not in git)
+```

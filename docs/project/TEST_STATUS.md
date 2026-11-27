@@ -1,19 +1,17 @@
 # TEST_STATUS
-Last updated: 2026-11-27 (end of Phase 9, before the 0.8.0 build)
+Last updated: 2026-11-27 (after the backlog items; 0.8.1 released)
 
 | Suite | Location / command | Status |
 |---|---|---|
-| non-GUI tests | `pytest -q tests --ignore=tests\gui` | 2198 passed in 61 s |
-| GUI tests (offscreen) | `pytest -q tests\gui` (QT_QPA_PLATFORM=offscreen) | 304 passed in 76 s |
+| non-GUI tests | `pytest -q tests --ignore=tests\gui` (Python 3.14) | 2298 passed |
+| GUI tests (offscreen) | `pytest -q tests\gui` (QT_QPA_PLATFORM=offscreen) | 329 passed, clean exit (crash root cause fixed 2026-11-27) |
 | lint | `ruff check .` | All checks passed |
 | numerics validation | `python tools\validate_numerics.py` | 170 / 170 |
-| architecture (layer rules, import cycles) | tests/architecture | included above |
-| toolboxes (9 toolboxes, 85 functions) | tests/toolboxes | included above; hand calculations and textbook values |
-| every example script runs clean | tests/toolboxes/test_examples_run.py | 10 scripts, incl. full_feature_test.m (no FAIL lines) |
-| docs complete, links resolve | tests/app/test_docs_pages.py | included above |
-| offline guard | tests/conftest.py | active for every test; working folder restored after each test |
-| frozen build smoke (0.8.0) | packaging\build.ps1 | PASSED: app folder 313 MB, --version, --selftest (23 s, minimal PATH), full_feature_test.m 152/152 in the frozen app, GUI --smoke |
-| clean PC (no Python) | manual | NOT DONE (task T2.7b needs a second PC or VM) |
+| every example script runs clean | tests/toolboxes/test_examples_run.py | incl. full_feature_test.m (no FAIL lines) |
+| help/docs completeness | tests/app/test_function_help.py, test_docs_pages.py, test_manual.py | every command and toolbox input documented; every example runs |
+| user manual examples | `python tools\make_manual.py` | 19 / 19 run clean |
+| frozen build smoke (0.8.1, Python 3.14) | packaging\build.ps1 | PASSED: self-test 16 s, full_feature_test 152/152 in the frozen app, GUI --smoke |
+| clean PC (no Python) | manual | NOT DONE (T2.7b; friends are testing the 0.8.1 installer) |
 
 Environment: Windows 11 (build 26300), Python 3.14.10 since 2026-11-28 (2292 + 322 tests pass on 3.14). Run the non-GUI and GUI folders in
 separate processes (a single-process full run hung twice on 2026-11-27; not reproduced).

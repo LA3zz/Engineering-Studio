@@ -24,6 +24,6 @@ CONTEXT BUDGET (very important)
   and list the files to attach in the next chat.
 - Never continue past one verified milestone in the same chat.
 
-CODE RULES (see HANDOFF "Conventions"): ruff clean (line length 100, isort ignores case, no B008), gui never imports lang/engine, every builtin in exactly one toolbox category in app/kernel/inprocess.py, GUI tests headless (QT_QPA_PLATFORM=offscreen), files UTF-8 without BOM, document every difference from MATLAB in the module docstring.
+CODE RULES (see HANDOFF "Conventions"; ARCHITECTURE.md and the generated API_REFERENCE.md describe the code if I attach them): ruff clean (line length 100, isort ignores case, no B008), gui never imports lang/engine, every builtin in exactly one category in app/kernel/inprocess.py with a help entry in app/help_core.py, every toolbox input described in app/help_toolbox.py, GUI tests headless (QT_QPA_PLATFORM=offscreen), files UTF-8 without BOM, document every difference from MATLAB in the module docstring.
 
 Start now with "Next task" in HANDOFF.md. First message: list the parts you will deliver (one line each), then deliver part A.

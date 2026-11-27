@@ -169,3 +169,24 @@ class ScriptTabs(QTabWidget):
 
     def maybe_close_all(self) -> bool:
         return all(self._resolve_unsaved(i) for i in range(self.count()))
+
+    # -- session -------------------------------------------------------------
+    def session(self) -> dict[str, object]:
+        """Open saved scripts (in tab order) and the current one, for the next start-up.
+        Untitled scripts are not remembered."""
+        paths = [str(e.path) for i in range(self.count())
+                 if (e := self.editor(i)) is not None and e.path is not None]
+        cur = self.current_editor()
+        return {"paths": paths, "current": str(cur.path) if cur and cur.path else None}
+
+    def restore_session(self, state: object) -> int:
+        """Reopen the scripts of ``session()``; files that no longer exist are skipped.
+        Returns the number of scripts opened."""
+        if not isinstance(state, dict):
+            return 0
+        paths = [p for p in state.get("paths", []) if isinstance(p, str) and Path(p).is_file()]
+        opened = sum(1 for p in paths if self.open_path(p))
+        current = state.get("current")
+        if isinstance(current, str) and Path(current).is_file():
+            self.open_path(current)
+        return opened

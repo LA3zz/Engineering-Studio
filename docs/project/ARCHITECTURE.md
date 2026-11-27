@@ -13,7 +13,7 @@
 | L1 | `engine`, `control`, `data`, `plotting.model` | L0, numpy, scipy, sympy (engine), python-control (control), pandas/openpyxl/sqlite3 (data) |
 | L2 | `lang`, `sim`, `toolboxes.<name>` | L0, L1. **Not each other.** (toolboxes may not import other toolboxes; shared code goes to `engine`) |
 | L3 | `app` | L0–L2 (toolboxes only through registry loader) |
-| L4 | `gui` | `app`, `core`, `plotting.model`, `sim.model`, `sim.serialization`, PySide6, pyqtgraph, pyvista(qt) |
+| L4 | `gui` | `app`, `core`, `plotting.model`, `plotting.text`, `sim.model`, `sim.serialization`, PySide6, pyqtgraph (Matplotlib only in `gui.mpl_view`) |
 
 Special: `plotting.export` (Matplotlib/Agg, no Qt) is L1-level and used by `app` for file export. PyQtGraph rendering lives in `gui.plots`. Root-level modules (`__main__`, `version`, `selftest`) are composition roots and not layered; `engstudio.selftest` is the bundle probe and is exempt from the third-party placement rules (tested).
 
@@ -23,27 +23,33 @@ Special: `plotting.export` (Matplotlib/Agg, no Qt) is L1-level and used by `app`
 | `core` | Error hierarchy, `Diagnostic`, `Trace`, units & conversion, registry/plugin API, paths, logging, version |
 | `engine` | Numerical algorithms: linalg, calculus, solvers, ode, interpolation, regression, optimize, stats, transforms, symbolic, uncertainty, validation helpers. Pure functions on arrays |
 | `control` | TF/SS/PID, time & frequency response, stability, wrapping python-control with validation and our error types |
-| `data` | SQLite store (settings, history, recent), CSV/Excel import-export, project file read/write, workspace save/load |
-| `plotting` | `model` (FigureSpec/AxesSpec/SeriesSpec dataclasses), `export` (Matplotlib Agg PNG/SVG/PDF) |
+| `data` | Reserved (empty). Settings live in `gui.settings` (JSON); file I/O lives in `app.file_bindings` and `app.workspace_files` |
+| `plotting` | `model` (FigureSpec/AxesSpec/SeriesSpec/SurfaceSpec/TextSpec), `text` (TeX subset), `export` (Matplotlib Agg PNG/SVG/PDF/GIF) |
 | `lang` | Lexer, parser, AST, tree-walking interpreter, value model, builtin function binding to registry. No I/O except through injected `Host` interface (disp, plot, input) |
 | `sim` | Model graph, block library, compiler (sorting, loop detection, sample-time propagation), solvers, runner, `.esmodel` serialization |
-| `toolboxes.*` | 15 independent packages: functions, manifest, docs, examples, tests |
-| `app` | `Session` (workspace + interpreter + host), `kernel` (process, protocol, client), `ProjectManager`, `SimulationService`, `ToolboxManager`, `DocService` |
-| `gui` | Windows, docks, editor, command window, workspace/folder/toolbox browsers, figure windows, simulation canvas, themes |
+| `toolboxes.*` | 9 built-in packages (mechanical, thermo, fluids, heat, electrical, materials, structures, robotics, aero; 85 functions): `toolbox.toml`, `__init__.py` (register), `functions.py`. Docs pages in `app/docs_pages`, examples in `examples/`, tests in `tests/toolboxes` |
+| `app` | `kernel` (protocol, client, `inprocess` kernel, stub), bindings that add builtins to the interpreter (`toolbox_bindings`, `sim_bindings`, `file_bindings`, `workspace_files`), function help (`help_core`, `help_toolbox`, `function_help`), `sim_service` (model editor runs), `docs` + `docs_pages`, `syntax` (highlight rules), `input_state`, `figure_export` |
+| `gui` | Main window, docks, editor (+ call tips, `calltip`), command window, workspace/folder/toolbox browsers (+ details pane), figure windows (PyQtGraph 2-D, embedded Matplotlib 3-D), model editor (`sim_editor`), themes, splash, single instance, update check |
 
-## 4. Process model and communication
+## 4. Kernel model and communication (as built)
 ```
-GUI process                              Kernel process (spawned)
- gui.* ──Qt signals── app.KernelClient ══ pipe ══ app.kernel.Worker ── Session ── lang / sim / engine / toolboxes
+GUI thread                                   Kernel worker thread (same process)
+ gui.* ──Qt signals── gui.KernelBridge ── app.kernel.InProcessKernelClient ── lang / sim / engine / toolboxes
 ```
-- GUI never imports `lang`, `engine`, or `toolboxes`. It only sees messages and plain data.
-- Transport: `multiprocessing.Connection` (trusted local process), versioned dataclass messages (`PROTOCOL_VERSION`).
-- Requests (GUI→Kernel): `Execute(code|file, request_id)`, `Cancel`, `GetVariable(name)`, `SetVariable`, `RunSimulation(model)`, `ListToolboxes`, `Shutdown`.
-- Events (Kernel→GUI): `Stdout`, `Diagnostics`, `WorkspaceSummary` (name, class, size, short preview — never whole large arrays), `VariableValue`, `FigureUpdate(FigureSpec)`, `SimProgress`, `SimResult`, `ExecutionFinished(status)`.
-- Stop: soft cancel flag checked by interpreter loop; on timeout, kernel process is killed and restarted (workspace lost unless autosaved — documented behaviour).
-- Testing: `InProcessKernelClient` implements the same interface synchronously.
-- Threads: all kernel work is off the GUI thread; Qt-side client uses `QSocketNotifier`/`QThread` reader and re-emits signals.
-
+- The kernel runs in the GUI's process on a worker thread (the separate-process design of
+  Phase 1 was not needed: Stop is a cancel flag checked by the interpreter and by long
+  builtins via `interp.check_cancel()`). `InProcessKernelClient(threaded=False)` runs
+  synchronously for tests and `engstudio-console --run`.
+- The GUI never imports `lang`, `engine` or `toolboxes`; it only sees protocol events and plain
+  data (`app.kernel.protocol`).
+- Requests: `execute(code, file)`, `cancel(request_id)`, `list_toolboxes()`, `figure_closed(n)`,
+  `shutdown()`.
+- Events: `Stdout`, `Diagnostics`, `WorkspaceSummary` (name, class, size, preview),
+  `ExecutionFinished(status)`, `ToolboxList` (every function with signature, summary, full help,
+  argument names and docs; feeds the Toolbox browser and call tips), `FigureUpdate(FigureSpec)`,
+  `FigureClosed`, `OpenModel` (`open_system`), `FolderChanged` (`cd`).
+- The working folder is the Current Folder panel: the panel `chdir`s; `cd` emits `FolderChanged`.
+- Simulation runs from the model editor go through `app.sim_service` on a QThread.
 ## 5. Value model (interpreter ↔ engine)
 | MATLAB-like | Python representation |
 |---|---|
@@ -115,7 +121,7 @@ def beam_deflection_ss(...): ...
 ```
 - `tb_function` generates input validation from `Arg` specs (shape, positivity, range, unit tag) and records metadata for the toolbox browser/docs.
 - `core.registry.Registry` holds functions and blocks; `app.ToolboxManager` loads toolboxes.
-- Discovery: (1) built-ins from an explicit list in `toolboxes/__init__.py` (explicit so PyInstaller sees them); (2) user toolboxes folder `%APPDATA%\EngineeringStudio\toolboxes\` (manifest + Python files, loaded only after user enables; trust warning shown).
+- Discovery: (1) built-ins from an explicit list `BUILTIN` in `toolboxes/__init__.py` (explicit so PyInstaller sees them), bound into the interpreter by `app.toolbox_bindings` (a toolbox name never replaces a core builtin; tested); (2) planned, not built yet: user toolboxes folder `%APPDATA%\EngineeringStudio\toolboxes\` (manifest + Python files, loaded only after user enables; trust warning shown).
 - Version gate: manifest `api_version` must equal core `PLUGIN_API_VERSION` else toolbox disabled with a diagnostic.
 - A toolbox failing to load never prevents startup.
 
@@ -123,17 +129,30 @@ def beam_deflection_ss(...): ...
 - `sim.model`: `Model`, `Block`, `Port`, `Line`, `SolverSettings` (pure dataclasses; GUI edits these).
 - `sim.blocks`: registered via `@sim_block` — declares ports, parameters (with validation), `kind` (continuous/discrete/algebraic/source/sink), `derivatives()`, `output()`, `update()`.
 - `sim.compiler`: validate graph → flatten subsystems → topological sort → algebraic-loop detection (error v1) → sample-time propagation → state vector layout.
-- `sim.solvers`: continuous via `scipy.integrate.solve_ivp` (RK45/RK23/DOP853/Radau/BDF/LSODA); fixed-step RK4/Euler; discrete via major-step scheduling at GCD of sample times; hybrid: integrate between discrete hits.
-- `sim.runner`: `run(model, settings, progress_cb, cancel_token) -> SimResult(t, signals)`.
+- Solvers (in `sim.runner`): continuous via `scipy.integrate.solve_ivp` (RK45/RK23/DOP853/Radau/BDF/LSODA); fixed-step RK4/Euler; discrete via major-step scheduling at GCD of sample times; hybrid: integrate between discrete hits.
+- `sim.runner`: `run(model, should_stop=...) -> SimResult` (tout, scopes, To Workspace data, outports, displays); `sim.subsystems` flattens subsystems; blocks live in `sim.blocks` + `blocks_sources/sinks/continuous/discrete/nonlinear`.
 - `sim.serialization`: `.esmodel` JSON with `schema_version` and migration functions.
 - Validation sources: analytic step responses (1st/2nd order), integrator of constant, harmonic oscillator energy conservation.
 
 ## 9. Plotting
-Interpreter plot commands build/modify `FigureSpec` held in the kernel session and send diffs/snapshots as `FigureUpdate`. `gui.plots` renders with PyQtGraph (interactive); `plotting.export` renders same spec with Matplotlib/Agg for PNG/SVG/PDF. 3D via PyVista in `gui.plots3d` (optional dependency, lazily imported).
+Interpreter plot commands build/modify `FigureSpec` held in the kernel (`lang.figstate`) and send snapshots as `FigureUpdate` (throttled to 30/s per figure). `gui.plots` renders 2-D with PyQtGraph; 3-D, surfaces, contours and polar plots use an embedded Matplotlib canvas (`gui.mpl_view`); `plotting.export` renders the same spec with Matplotlib/Agg for PNG/SVG/PDF/GIF.
 
 ## 10. Data and persistence
-SQLite (`app.db`): settings, command history, recent projects, window layouts. Schema versioned with simple migration table. Projects: JSON manifest + folder. All paths via `core.paths` (supports portable mode if `portable.flag` next to exe).
+- UI settings: `%APPDATA%\EngineeringStudio\ui_settings.json` (`gui.settings.UiSettings`):
+  window geometry/state, theme and custom themes, command history, current folder, open
+  script tabs (restored at start-up).
+- Workspace files: `save`/`load` use MATLAB `.mat` (v5) via `scipy.io` (`app.workspace_files`).
+- Lab data: CSV/TXT/DAT/TSV/XLSX via pandas/openpyxl (`app.file_bindings`).
+- Models: `.esmodel` JSON (`sim.serialization`). Start-up errors of the packaged app:
+  `%LOCALAPPDATA%\EngineeringStudio\startup_error.txt`.
 
+## 10a. Function help and call tips
+`app.help_core` (calling forms + summary of every core command), `app.help_toolbox` (meaning
+of every toolbox input + a tested example) and `app.function_help` (adds units, limits,
+defaults, outputs and result fields from the `@tb_function` declarations) are the one source
+for: the Toolbox browser details pane, `help name`, call tips (`gui.calltip`, fed by the
+`ToolboxList` event) and the PDF manual (`tools/make_manual.py`). Tests check that every
+command and every toolbox input is documented and that every example runs.
 ## 11. Testing strategy
 | Suite | Purpose | Notes |
 |---|---|---|
@@ -150,7 +169,7 @@ Coverage target for `engine` and `lang`: ≥90% lines (reported, not gamed). Eve
 ## 12. Offline packaging strategy
 - PyInstaller **onedir** (not onefile: faster start, fewer AV false positives, LGPL-friendly dynamic linking of PySide6).
 - `packaging/engstudio.spec`: explicit `hiddenimports` for built-in toolboxes, `collect_data_files` for resources/docs/themes, exclude unused Qt modules (WebEngine etc.) and test packages.
-- `multiprocessing.freeze_support()` at entry; kernel spawned with `spawn` start method.
+- `multiprocessing.freeze_support()` at entry (used by `--selftest`); the kernel itself runs on a thread. Two programs share one runtime: `EngineeringStudio.exe` (windowed) and `engstudio-console.exe` (`--version`, `--selftest`, `--run script.m`).
 - Installer: Inno Setup script → per-user install, Start Menu entry, `.m` and `.esmodel` association (optional).
 - Docs shipped as local Markdown in `engstudio/app/docs_pages` (inside a known package so the layer test accepts it), rendered by `QTextBrowser`.
 - Gate: smoke build + `--selftest` on a clean Windows VM without Python each phase; third-party license notices bundled.
@@ -159,13 +178,13 @@ Coverage target for `engine` and `lang`: ≥90% lines (reported, not gamed). Eve
 ## 13. Decision log
 | ID | Decision | Consequence |
 |---|---|---|
-| D1 | Python 3.14 (since 2026-11-28; 3.11 still works) | All pinned libraries have 3.14 wheels; tests and frozen build pass |
-| D2 | Kernel in separate process | Serialization cost; robust Stop; workspace summaries only |
+| D1 | Python 3.14 (since 2026-11-27; 3.11 still works) | All pinned libraries have 3.14 wheels; tests and frozen build pass |
+| D2 | Kernel on a worker thread in the GUI process (changed from the planned separate process) | No serialization; Stop via cancel flag; a hard crash in native code would take the GUI down |
 | D3 | Handwritten Pratt parser | Full control of MATLAB quirks; more code to test |
 | D4 | Plot specs as data | GUI-agnostic plots; renderer parity tests needed |
 | D5 | `control` is L1 library | `sim` and toolbox share it without layer violation |
 | D6 | Explicit built-in toolbox list | Slight boilerplate; reliable freezing |
-| D7 | JSON for projects/models, SQLite for app data | No TOML writer dependency |
+| D7 | JSON for models and UI settings, MATLAB .mat for workspaces | No database needed; .mat files interchange with MATLAB |
 | D8 | `.m` extension for scripts | Familiar; only our subset runs |
 | D9 | Registry is an explicit object; decorators only attach metadata | No global state, easy to test; `app.ToolboxManager` owns the live registry |
 | D10 | Validated numeric arguments are normalised before the function body runs | Function bodies can rely on float/float64 types; callers' data is never mutated |
