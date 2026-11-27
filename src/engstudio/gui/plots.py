@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 import pyqtgraph as pg
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget
 
 from engstudio.gui.plot_params import (
@@ -34,7 +34,11 @@ _PEN_QT = {
 class FigureView(pg.GraphicsLayoutWidget):
     """Axes laid out on the figure's rows x cols grid (``FigureSpec.placements``), with the
     figure title (sgtitle) in a row above. ``warnings`` lists anything in the last spec that
-    could not be drawn faithfully."""
+    could not be drawn faithfully. Double-clicking the figure title, an axes title, an axis
+    (with its label) or the plot area emits `edit_requested(axes index, part)` with part
+    'figure', 'title', 'xlabel', 'ylabel' or '' (index -1 for the figure title)."""
+
+    edit_requested = Signal(int, str)
 
     def __init__(self, theme: str = "light", parent: QWidget | None = None) -> None:
         super().__init__(parent=parent)
@@ -72,6 +76,34 @@ class FigureView(pg.GraphicsLayoutWidget):
         for i, (axes, (r, c, rs, cs)) in enumerate(
                 zip(spec.axes, spec.placements(), strict=True)):
             self._plots.append(self._add_axes(r + top, c, rs, cs, axes, i + 1))
+
+    def part_at(self, scene_x: float, scene_y: float) -> tuple[int, str] | None:
+        """Which axes and which part (see the class doc) is at a scene position."""
+        from PySide6.QtCore import QPointF
+
+        pos = QPointF(scene_x, scene_y)
+        if self.title_label is not None and self.title_label.sceneBoundingRect().contains(pos):
+            return -1, "figure"
+        for i, plot in enumerate(self._plots):
+            if plot.titleLabel.isVisible() and \
+                    plot.titleLabel.sceneBoundingRect().contains(pos):
+                return i, "title"
+            if plot.getAxis("bottom").sceneBoundingRect().contains(pos):
+                return i, "xlabel"
+            if plot.getAxis("left").sceneBoundingRect().contains(pos):
+                return i, "ylabel"
+            if plot.vb.sceneBoundingRect().contains(pos):
+                return i, ""
+        return None
+
+    def mouseDoubleClickEvent(self, ev) -> None:  # noqa: N802 (Qt override)
+        p = self.mapToScene(ev.position().toPoint())
+        hit = self.part_at(p.x(), p.y())
+        if hit is not None:
+            self.edit_requested.emit(*hit)
+            ev.accept()
+            return
+        super().mouseDoubleClickEvent(ev)
 
     # -- internals ----------------------------------------------------------
     def _add_axes(self, row: int, col: int, rowspan: int, colspan: int, ax: AxesSpec,

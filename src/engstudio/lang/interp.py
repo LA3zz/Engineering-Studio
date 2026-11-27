@@ -184,6 +184,7 @@ class Interpreter:
         self._cancel = False
         self._end: list[tuple[object, int, int] | None] = []
         self._depth = 0
+        self._fast_cache: dict[tuple, tuple[A.Node, object]] = {}
 
     # ------------------------------------------------------------ entry points
     def execute(self, source: str, file: str | None = None, reset_cancel: bool = True) -> None:
@@ -629,6 +630,19 @@ class Interpreter:
             raise EvalError("Too many input arguments.", node.loc)
         local: dict[str, object] = dict(handle.captured)
         local.update(zip(handle.params, args, strict=False))
+        if nargout <= 1:
+            fast = self._fast(handle)
+            if fast is not None:
+                self._check_cancel()  # solvers call this in tight loops: keep Stop working
+                self._enter(node)  # same recursion limit as the interpreter path
+                try:
+                    return [fast(local)]
+                except (Cancelled, EvalError):
+                    raise
+                except Exception:  # noqa: BLE001 - the interpreter re-runs it and reports
+                    pass
+                finally:
+                    self._depth -= 1
         self._enter(node)
         self._end.append(None)
         try:
@@ -637,6 +651,21 @@ class Interpreter:
             self._end.pop()
             self._depth -= 1
         return outs[: max(nargout, 1)]
+
+    def _fast(self, handle: FunctionHandle):
+        """Compiled form of an anonymous function (``lang.fastcall``), cached per body;
+        ``None`` when the body is not simple enough (the interpreter evaluates it)."""
+        from engstudio.lang.fastcall import compile_anon
+
+        key = (id(handle.body), handle.params, frozenset(handle.captured))
+        entry = self._fast_cache.get(key)
+        if entry is not None and entry[0] is handle.body:
+            return entry[1]
+        if len(self._fast_cache) > 256:
+            self._fast_cache.clear()
+        fn = compile_anon(self, handle.params, frozenset(handle.captured), handle.body)
+        self._fast_cache[key] = (handle.body, fn)  # keeps the body alive: ids stay unique
+        return fn
 
     def _anon(self, node: A.AnonFunc, env: Env) -> FunctionHandle:
         names = {n.name for n in A.walk(node.body) if isinstance(n, A.Ident)}

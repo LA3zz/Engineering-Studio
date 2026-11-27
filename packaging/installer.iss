@@ -62,3 +62,12 @@ Root: HKA; Subkey: "Software\Classes\.m\OpenWithProgids"; ValueType: string; Val
 
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "Start {#AppName}"; Flags: nowait postinstall skipifsilent
+; One-click update from Help > Check for Updates runs this installer with /SILENT /UPDATE:
+; start the program again when the update is finished.
+Filename: "{app}\{#AppExe}"; Flags: nowait; Check: IsUpdate
+
+[Code]
+function IsUpdate: Boolean;
+begin
+  Result := Pos('/UPDATE', UpperCase(GetCmdTail)) > 0;
+end;

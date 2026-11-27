@@ -1,5 +1,5 @@
 # API_REFERENCE
-Generated from the code by `tools/make_api_reference.py` for version 0.8.1.
+Generated from the code by `tools/make_api_reference.py` for version 0.8.2.
 Do not edit by hand: change the docstrings and run the script again.
 
 Layer rules and the design behind these modules: ARCHITECTURE.md. Error types live in
@@ -531,12 +531,23 @@ Tabbed script editor with syntax highlighting.
 - class `ScriptTabs(parent: 'QWidget | None' = None) -> 'None'`: 
   - methods: editor, current_editor, set_theme, new_script, open_path, save, save_as, close_tab, maybe_close_all, session, restore_session
 
+### `engstudio.gui.figure_edit`
+
+Editing a figure in its window: titles, axis labels, limits, scales, grid, legend and the look of each line (name, colour, style, width, marker).
+
+- class `AxesPropertiesDialog(spec: 'FigureSpec', index: 'int' = 0, focus: 'str' = '', parent: 'QWidget | None' = None, default_colors: 'tuple[str, ...]' = ('#0072BD'...`: Edit one axes (choose which with the subplot selector when there are several) and the
+  - methods: applied, result_spec
+- `edit_axes(spec: 'FigureSpec', index: 'int', **changes) -> 'FigureSpec'`: A copy of ``spec`` with fields of axes ``index`` changed (AxesSpec field names).
+- `edit_figure_title(spec: 'FigureSpec', title: 'str') -> 'FigureSpec'`: 
+- `edit_series(spec: 'FigureSpec', index: 'int', series: 'int', **changes) -> 'FigureSpec'`: A copy with fields of one series of axes ``index`` changed (SeriesSpec field names).
+- `set_all_axes(spec: 'FigureSpec', **changes) -> 'FigureSpec'`: The same change (e.g. ``grid=True``) on every axes of the figure.
+
 ### `engstudio.gui.figure_window`
 
 Top-level window showing one figure (``FigureView`` + status line for render warnings).
 
 - class `FigureWindow(number: 'int', theme: 'str' = 'light', parent: 'QWidget | None' = None) -> 'None'`: 
-  - methods: set_figure, set_theme, save_as, save_to, closeEvent
+  - methods: set_figure, set_theme, apply_edit, edit_part, edit_figure_title, toggle_grid, toggle_legend, toggle_equal, reset_zoom, undo_changes, save_as, save_to, closeEvent
 
 ### `engstudio.gui.folder_panel`
 
@@ -592,10 +603,10 @@ Main window: menus, toolstrip, dockable panels, themes, persisted layout.
 
 ### `engstudio.gui.mpl_view`
 
-Embedded Matplotlib canvas for figures PyQtGraph cannot draw (3-D, polar, surface and contour axes; design pick 1). The figure is drawn by the same code as file export, so the window and a saved PNG/PDF look the same. A toolbar gives pan, zoom and (3-D) rotation.
+Embedded Matplotlib canvas for figures PyQtGraph cannot draw (3-D, polar, surface and contour axes; design pick 1). The figure is drawn by the same code as file export, so the window and a saved PNG/PDF look the same. A toolbar gives pan, zoom and (3-D) rotation. Double-clicking a title, an axis label or an axes emits `edit_requested` (as `FigureView`).
 
 - class `MplFigureView(theme: 'str' = 'light', parent: 'QWidget | None' = None) -> 'None'`: 
-  - methods: set_theme, set_figure
+  - methods: main_axes, part_at, set_theme, set_figure
 
 ### `engstudio.gui.panels`
 
@@ -626,7 +637,7 @@ Rendering decisions for figures that need no Qt or PyQtGraph: colours, marker/pe
 Renders a ``FigureSpec`` with PyQtGraph. The GUI only ever sees the spec (plain data).
 
 - class `FigureView(theme: 'str' = 'light', parent: 'QWidget | None' = None) -> 'None'`: Axes laid out on the figure's rows x cols grid (``FigureSpec.placements``), with the
-  - methods: plot_items, set_theme, set_figure
+  - methods: plot_items, set_theme, set_figure, part_at, mouseDoubleClickEvent
 
 ### `engstudio.gui.settings`
 
@@ -711,13 +722,16 @@ Toolbox browser (G3.2): tree of toolboxes and their functions, with a filter box
 
 ### `engstudio.gui.updates`
 
-Help > Check for updates: asks GitHub for the newest release only when the user clicks it (the application is otherwise fully offline). A newer version opens the release page in the browser, where the user downloads the new installer; installing it upgrades in place.
+Help > Check for Updates: asks GitHub for the newest release only when the user clicks it (the application is otherwise fully offline).
 
+- `INSTALLER_ARGS` (list)
 - `RELEASES_PAGE` (str)
-- class `UpdateChecker(current: 'str', parent: 'QWidget | None' = None) -> 'None'`: 
-  - methods: check
+- class `Release(tag: 'str', page: 'str', installer_name: 'str' = '', installer_url: 'str' = '', installer_size: 'int' = 0, sha256: 'str' = '', sha256_ur...`: Release(tag: 'str', page: 'str', installer_name: 'str' = '', installer_url: 'str' = '', installer_size: 'int' = 0, sha256: 'str' = '', sha256_url: 'str' = '')
+- class `UpdateChecker(current: 'str', parent: 'QWidget | None' = None, launcher: 'Callable[[Path], bool]' = <function _launch at 0x000001CD807603B0>, download...`: 
+  - methods: check, download_and_install
 - `is_newer(latest: 'str', current: 'str') -> 'bool'`: True if release tag ``latest`` (e.g. 'v0.7.0') is newer than ``current``.
-- `parse_release(payload: 'bytes') -> 'tuple[str, str]'`: (tag, page URL) from GitHub's 'latest release' JSON; ValueError if unusable.
+- `parse_release(payload: 'bytes') -> 'Release'`: The release and its installer asset from GitHub's 'latest release' JSON; ValueError if
+- `sha256_of(path: 'Path') -> 'str'`: 
 
 ### `engstudio.gui.workspace_panel`
 
@@ -901,6 +915,13 @@ Command Window text for values (T3.4d): ``format_value``, ``format_disp``, ``unp
 - `format_value(name: 'str', value: 'object') -> 'str'`: Text MATLAB would print for the statement ``name = value`` (ends with a newline).
 - `format_disp(value: 'object') -> 'str'`: Text of ``disp(value)`` (ends with a newline; empty arrays print nothing).
 - `short_text(value: 'object', limit: 'int' = 40) -> 'str'`: One-line preview for the Workspace browser (scalars show their value).
+
+### `engstudio.lang.fastcall`
+
+Fast calls of anonymous functions (``@(t, y) [y(2); -wn^2*y(1)]``).
+
+- class `Fallback(...)`: The compiled path cannot handle this call; use the interpreter instead.
+- `compile_anon(interp, params: 'tuple[str, ...]', captured: 'frozenset[str]', body: 'A.Node') -> 'Compiled | None'`: A function ``env -> value`` for the body, or ``None`` if it is not simple enough.
 
 ### `engstudio.lang.figstate`
 

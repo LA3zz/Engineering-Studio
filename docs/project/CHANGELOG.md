@@ -1,6 +1,22 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Version 0.8.2: one-click update, figure editing (built, not published yet)
+- Figure windows: Edit menu (Axes Properties, Figure Title, Grid, Legend, Undo All Changes) and
+  View menu (Reset Zoom, Equal Axis Scaling); double-clicking a title, axis or plot opens the
+  properties dialog at that field (titles, labels, limits, scales, grid, legend, equal scaling,
+  and each line's name, colour, style, width, marker). `gui/figure_edit.py`; Save As saves the
+  edited figure.
+- Anonymous functions called by solvers run through a compiled path (`lang/fastcall.py`) that
+  uses the interpreter's own operations (identical results, tested side by side): about 12 %
+  faster `ode45` scripts, and Stop now also works while a solver is running.
+- Help > Check for Updates offers Download and install: downloads the release's installer with a
+  progress bar, checks its SHA-256 (GitHub asset digest or the attached .sha256), closes the app
+  normally and runs the installer silently with /UPDATE; installer.iss restarts the app after an
+  update. A file with a wrong checksum is deleted and never run. Open download page still exists.
+- Includes the save/load workspace, tab restore and test-crash fixes listed below.
+- Tests: file:// downloads (digest, .sha256 file, wrong checksum, missing file, no checksum).
+
 ## 2026-11-27 - Backlog done, docs brought up to date (after the 0.8.1 release)
 - Save/Load Workspace: `save`, `save file x y`, `load file`, `S = load(file)` in MATLAB .mat
   format (files work with MATLAB both ways); Save.../Load... buttons in the Workspace panel.

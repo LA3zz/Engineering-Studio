@@ -26,8 +26,12 @@ code-signed; click <b>More info</b> and then <b>Run anyway</b>.</li>
 for <code>.m</code> files does not change).</li>
 </ol>
 <p><b>Updating:</b> choose <b>Help &rarr; Check for Updates</b>. The program asks GitHub (only when you
-click) whether a newer release exists and offers to open the download page. Running a newer
-installer upgrades the program in place and keeps your settings, layout, themes and scripts.</p>
+click) whether a newer release exists. If one does, click <b>Download and install</b>: the new
+installer is downloaded with a progress bar, its SHA-256 checksum is checked (a file that does
+not match is deleted and never run), Engineering Studio closes (you are asked to save unsaved
+scripts first), the update installs on its own and the program starts again on the new
+version. Your settings, layout, themes and scripts are kept. <b>Open download page</b> lets you
+download the installer yourself instead. (Versions before 0.8.2 only offer the download page.)</p>
 <p><b>Removing:</b> use <i>Settings &rarr; Apps &rarr; Installed apps &rarr; Engineering Studio &rarr; Uninstall</i>.
 Your own scripts are never deleted.</p>
 
@@ -307,6 +311,23 @@ h(2)</pre>
 again. Pan with the left mouse button and zoom with the wheel. Save a figure from its window with
 Ctrl+S (PNG, SVG or PDF) or from a script with <code>saveas</code>, <code>print</code> or
 <code>exportgraphics</code>.</p>
+
+<h2 id="plot-edit">Editing a figure in its window</h2>
+<p>You can change a figure after it is drawn, as with MATLAB's property editor:</p>
+<ul>
+<li><b>Double-click</b> a title, an axis (with its label) or the plot area: the <b>Axes Properties</b>
+dialog opens with that field selected. The same dialog is under <b>Edit &rarr; Axes Properties...</b>
+(Ctrl+E).</li>
+<li>The dialog changes the figure title (above all subplots), the axes title, the x/y/z labels
+(TeX works: <code>\theta</code>, <code>x^2</code>, <code>\omega_n</code>), the axis limits (or Auto), linear or
+log scales, grid, legend and equal scaling, and for every line its legend name, colour, line
+style, width and marker. With subplots, pick the subplot at the top of the dialog. <b>Apply</b>
+shows a change without closing the dialog.</li>
+<li><b>Edit</b> also has Figure Title..., Grid On/Off (Ctrl+G), Legend On/Off (Ctrl+L) and Undo All
+Changes; <b>View</b> has Reset Zoom (Ctrl+0) and Equal Axis Scaling.</li>
+<li><b>File &rarr; Save As</b> saves the figure as you edited it. Edits belong to the window: if the
+script draws the same figure again, the script's version replaces them.</li>
+</ul>
 
 <h2 id="plot-2d">2-D plots</h2>
 <pre class="m">t = linspace(0, 2*pi, 200);

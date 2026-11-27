@@ -1,6 +1,7 @@
 # HANDOFF
-Last updated: 2026-11-27. App version 0.8.1, published on GitHub Releases as the latest release
-(0.8.0 = pre-release, 0.6.0 = first release). Phases 1-10 done (except the clean-PC test
+Last updated: 2026-11-27. App version 0.8.2 built (one-click update, figure editing, save/load, tab restore,
+faster anonymous functions);
+not published yet. Latest published release: 0.8.1 (0.8.0 = pre-release, 0.6.0 = first). Phases 1-10 done (except the clean-PC test
 T2.7b, deferred: friends are testing 0.8.1). All tests pass (see TEST_STATUS.md).
 Full history: CHANGELOG.md and TASKS.md. Plan and backlogs: ROADMAP.md.
 
@@ -41,7 +42,9 @@ module, function and signature.
   `Downloads\Apps\Engineering Studio\`.
 - Publish (the user clicks Publish): GitHub Releases, tag `v<version>`, attach the setup .exe,
   its .sha256 and the manual PDF; must NOT be a pre-release, or Help > Check for Updates (which
-  reads /releases/latest) will not offer it.
+  reads /releases/latest) will not offer it. Keep the installer name
+  `EngineeringStudio-Setup-<version>.exe`: the one-click updater (0.8.2+) looks for it, verifies its
+  SHA-256 and runs it with `/SILENT /UPDATE` (installer.iss restarts the app after /UPDATE).
 
 ## Conventions and gotchas
 - Project root: README, pyproject, requirements.lock.txt and folders only; docs in docs/project,

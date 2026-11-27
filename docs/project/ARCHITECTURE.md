@@ -171,6 +171,9 @@ Coverage target for `engine` and `lang`: ≥90% lines (reported, not gamed). Eve
 - `packaging/engstudio.spec`: explicit `hiddenimports` for built-in toolboxes, `collect_data_files` for resources/docs/themes, exclude unused Qt modules (WebEngine etc.) and test packages.
 - `multiprocessing.freeze_support()` at entry (used by `--selftest`); the kernel itself runs on a thread. Two programs share one runtime: `EngineeringStudio.exe` (windowed) and `engstudio-console.exe` (`--version`, `--selftest`, `--run script.m`).
 - Installer: Inno Setup script → per-user install, Start Menu entry, `.m` and `.esmodel` association (optional).
+- Updates: Help > Check for Updates (`gui.updates`) reads GitHub's latest release, downloads the
+  `EngineeringStudio-Setup-*.exe` asset, verifies its SHA-256 (asset digest or attached `.sha256`),
+  closes the app and runs the installer with `/SILENT /UPDATE` (the installer restarts the app).
 - Docs shipped as local Markdown in `engstudio/app/docs_pages` (inside a known package so the layer test accepts it), rendered by `QTextBrowser`.
 - Gate: smoke build + `--selftest` on a clean Windows VM without Python each phase; third-party license notices bundled.
 - Optional heavy components (PyVista/VTK) can be split into a later "3D add-on" if size becomes a problem.

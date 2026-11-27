@@ -3,6 +3,19 @@
 Each figure opens in its own window and is updated in place when the same figure number is
 drawn again. Pan and zoom with the mouse. Save a figure with Ctrl+S as PNG, SVG or PDF.
 
+## Editing a figure in its window
+
+- **Double-click** a title, an axis (x or y, with its label) or the plot area to open
+  **Axes Properties** at that field; or use **Edit > Axes Properties...** (Ctrl+E).
+- The dialog changes the figure title, axes title, x/y (and z) labels (TeX works:
+  `\theta`, `x^2`), axis limits (or Auto), linear/log scales, grid, legend, equal scaling,
+  and for every line its legend name, colour, line style, width and marker. With subplots,
+  choose the subplot at the top. **Apply** shows the change at once.
+- **Edit > Figure Title...**, **Grid On/Off** (Ctrl+G), **Legend On/Off** (Ctrl+L),
+  **Undo All Changes**; **View > Reset Zoom** (Ctrl+0) and **Equal Axis Scaling**.
+- Save As saves the edited figure. Edits belong to the window: if the script draws the
+  same figure again, the script's version replaces them.
+
 ## Plot commands
 
 - Figures: `figure`, `figure(n)`, `figure('Name', 'Title')`, `gcf`, `gca`, `clf`, `cla`,

@@ -13,7 +13,7 @@ Last updated: 2026-11-27 (after the backlog items; 0.8.1 released)
 | frozen build smoke (0.8.1, Python 3.14) | packaging\build.ps1 | PASSED: self-test 16 s, full_feature_test 152/152 in the frozen app, GUI --smoke |
 | clean PC (no Python) | manual | NOT DONE (T2.7b; friends are testing the 0.8.1 installer) |
 
-Environment: Windows 11 (build 26300), Python 3.14.10 since 2026-11-28 (2292 + 322 tests pass on 3.14). Run the non-GUI and GUI folders in
+Environment: Windows 11 (build 26300), Python 3.14.10 since 2026-11-27 (2292 + 322 tests pass on 3.14). Run the non-GUI and GUI folders in
 separate processes (a single-process full run hung twice on 2026-11-27; not reproduced).
 ## 2026-11-18 (Windows 10, Python 3.11.9, user-run)
 - `python -m pytest tests\gui tests\lang tests\architecture -q`: 81 passed in 2.13 s (includes 42 lexer tests; GUI tests run headless/offscreen).

@@ -4,7 +4,7 @@ An offline, MATLAB-style desktop environment for engineering students, built wit
 Write `.m` scripts, run them with F5, and get MATLAB-like output, figures and tools — no
 licence server and no internet connection needed.
 
-> Student project, version 0.8.1. Not affiliated with or endorsed by The MathWorks, Inc.;
+> Student project, version 0.8.2. Not affiliated with or endorsed by The MathWorks, Inc.;
 > MATLAB is a trademark of The MathWorks, Inc.
 
 ## Features
@@ -58,8 +58,10 @@ electrical, FEA, lab data and robotics/aerospace.
 3. No administrator rights are needed. Optional: a desktop shortcut and *Open with →
    Engineering Studio* for `.m` files (double-click keeps your default program).
 
-**Updating:** *Help → Check for Updates* (it contacts GitHub only when you click it), or download
-the newer installer and run it — it upgrades in place and keeps your settings and scripts.
+**Updating:** *Help → Check for Updates* (it contacts GitHub only when you click it) offers
+**Download and install**: the new installer is downloaded, its checksum is verified, the program
+restarts on the new version, and your settings and scripts are kept. (From 0.8.2 on; older
+versions open the download page instead.)
 
 ## Run from source
 
