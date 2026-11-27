@@ -23,6 +23,7 @@ import threading
 
 import numpy as np
 
+from engstudio.app.file_bindings import file_functions
 from engstudio.app.kernel.client import KernelClient
 from engstudio.app.kernel.protocol import (
     Diagnostics,
@@ -92,6 +93,8 @@ _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
         "iscomplex", "islogical", "ischar", "iscell", "isstruct", "is_function_handle", "isnan",
         "isinf", "isfinite")),
     "io": ("Input and output", ("disp", "fprintf", "sprintf", "num2str", "error", "warning")),
+    "files": ("Files and lab data", ("readmatrix", "readtable", "writematrix", "writetable",
+                                     "csvread", "csvwrite", "xlsread", "xlswrite")),
     "text": ("Strings", (
         "strcmp", "strcmpi", "strncmp", "strncmpi", "upper", "lower", "strtrim", "strrep",
         "strcat", "strsplit", "strjoin", "strfind", "contains", "startsWith", "endsWith",
@@ -252,6 +255,7 @@ class InProcessKernelClient(KernelClient):
             min_interval=FIGURE_INTERVAL)
         install_control_plots(self._interp, self._figures)
         self._interp.functions.update(self._workspace_commands())
+        self._interp.functions.update(file_functions(self._script_dir))
         self._toolbox_categories = self._install_toolboxes()
         self._interp.functions.update(sim_functions(
             self._interp, self._figures,

@@ -1,0 +1,6 @@
+[toolbox]
+name = "materials"
+display_name = "Materials and Lab Data"
+version = "0.1.0"
+api_version = 1
+category = "materials"
