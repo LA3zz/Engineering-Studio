@@ -8,8 +8,9 @@
   every Scope in its own figure.
 - ``open_system('model.esmodel')`` asks the desktop to open the model in the editor.
 
-Relative file names are relative to the application's working folder. Stop cancels a running
-simulation. Lives in ``app`` because the layer rules keep ``lang`` and ``sim`` apart.
+Relative file names are looked up in the working folder, then next to the running script.
+Stop cancels a running simulation. Lives in ``app`` because the layer rules keep ``lang`` and
+``sim`` apart.
 """
 
 from __future__ import annotations
@@ -41,13 +42,18 @@ def _text(v: object, what: str) -> str:
     raise ValidationError(f"{what} must be text")
 
 
-def _model_path(v: object, who: str) -> Path:
+def _model_path(v: object, who: str, script_dir: Callable[[], Path | None] | None = None
+                ) -> Path:
+    """The model file: as given (working folder), else next to the running script."""
     path = Path(_text(v, f"{who}: the model file name"))
     if not path.suffix:
         path = path.with_suffix(".esmodel")
-    if not path.exists():
-        raise ValidationError(f"{who}: model file {path} not found")
-    return path
+    if path.exists():
+        return path
+    base = script_dir() if script_dir is not None else None
+    if base is not None and not path.is_absolute() and (base / path).exists():
+        return base / path
+    raise ValidationError(f"{who}: model file {path} not found")
 
 
 def result_struct(res: SimResult) -> StructValue:
@@ -60,7 +66,8 @@ def result_struct(res: SimResult) -> StructValue:
 
 
 def sim_functions(interp: Interpreter, manager: FigureManager,
-                  open_model: Callable[[str], None]) -> dict[str, Builtin]:
+                  open_model: Callable[[str], None],
+                  script_dir: Callable[[], Path | None] | None = None) -> dict[str, Builtin]:
     def stop_requested() -> bool:
         try:
             interp.check_cancel()
@@ -71,7 +78,7 @@ def sim_functions(interp: Interpreter, manager: FigureManager,
     def sim(args: list, nargout: int) -> list:
         if not args:
             raise ValidationError("sim: use sim('model.esmodel').")
-        model = serialization.load(_model_path(args[0], "sim"))
+        model = serialization.load(_model_path(args[0], "sim", script_dir))
         rest = list(args[1:])
         if len(rest) % 2:
             raise ValidationError("sim: options must be name-value pairs.")
@@ -103,7 +110,7 @@ def sim_functions(interp: Interpreter, manager: FigureManager,
     def open_system(args: list, nargout: int) -> list:
         if len(args) != 1:
             raise ValidationError("open_system: use open_system('model.esmodel').")
-        open_model(str(_model_path(args[0], "open_system").resolve()))
+        open_model(str(_model_path(args[0], "open_system", script_dir).resolve()))
         return []
 
     return {"sim": sim, "open_system": open_system}

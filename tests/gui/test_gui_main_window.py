@@ -50,7 +50,7 @@ def test_docks_created_and_visible(win):
 
 def test_menus_present(win):
     titles = [a.text().replace("&", "") for a in win.menuBar().actions()]
-    assert titles == ["File", "View", "Run", "Help"]
+    assert titles == ["File", "View", "Run", "Simulation", "Help"]
 
 
 def test_visibility_toggle_and_reset(win, qapp):

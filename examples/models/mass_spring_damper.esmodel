@@ -1,0 +1,229 @@
+{
+  "format": "engstudio-model",
+  "schema_version": 1,
+  "name": "mass_spring_damper",
+  "settings": {
+    "start_time": 0.0,
+    "stop_time": 20.0,
+    "solver": "ode45",
+    "rel_tol": 0.001,
+    "abs_tol": 1e-06,
+    "max_step": 0.02,
+    "fixed_step": 0.01
+  },
+  "blocks": [
+    {
+      "id": "Force",
+      "type": "Step",
+      "name": "Force",
+      "params": {
+        "StepTime": 1.0,
+        "Final": 1.0
+      },
+      "position": [
+        20.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Sum1",
+      "type": "Sum",
+      "name": "Sum1",
+      "params": {
+        "Signs": "+--"
+      },
+      "position": [
+        150.0,
+        100.0
+      ],
+      "size": [
+        40.0,
+        60.0
+      ]
+    },
+    {
+      "id": "InvMass",
+      "type": "Gain",
+      "name": "1/m",
+      "params": {
+        "K": 1.0
+      },
+      "position": [
+        250.0,
+        110.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Velocity",
+      "type": "Integrator",
+      "name": "x_dot",
+      "params": {},
+      "position": [
+        380.0,
+        110.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Position",
+      "type": "Integrator",
+      "name": "x",
+      "params": {},
+      "position": [
+        510.0,
+        110.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Damping",
+      "type": "Gain",
+      "name": "c",
+      "params": {
+        "K": 0.4
+      },
+      "position": [
+        380.0,
+        220.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Stiffness",
+      "type": "Gain",
+      "name": "k",
+      "params": {
+        "K": 4.0
+      },
+      "position": [
+        510.0,
+        300.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Scope1",
+      "type": "Scope",
+      "name": "Scope1",
+      "params": {
+        "Title": "Displacement x (m)"
+      },
+      "position": [
+        660.0,
+        110.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "ToWorkspace1",
+      "type": "ToWorkspace",
+      "name": "ToWorkspace1",
+      "params": {
+        "VariableName": "x"
+      },
+      "position": [
+        660.0,
+        200.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "src": "Force",
+      "src_port": 1,
+      "dst": "Sum1",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Sum1",
+      "src_port": 1,
+      "dst": "InvMass",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "InvMass",
+      "src_port": 1,
+      "dst": "Velocity",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Velocity",
+      "src_port": 1,
+      "dst": "Position",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Velocity",
+      "src_port": 1,
+      "dst": "Damping",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Position",
+      "src_port": 1,
+      "dst": "Stiffness",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Damping",
+      "src_port": 1,
+      "dst": "Sum1",
+      "dst_port": 2,
+      "points": []
+    },
+    {
+      "src": "Stiffness",
+      "src_port": 1,
+      "dst": "Sum1",
+      "dst_port": 3,
+      "points": []
+    },
+    {
+      "src": "Position",
+      "src_port": 1,
+      "dst": "Scope1",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Position",
+      "src_port": 1,
+      "dst": "ToWorkspace1",
+      "dst_port": 1,
+      "points": []
+    }
+  ]
+}

@@ -255,8 +255,10 @@ class InProcessKernelClient(KernelClient):
         self._toolbox_categories = self._install_toolboxes()
         self._interp.functions.update(sim_functions(
             self._interp, self._figures,
-            lambda path: self._deliver(OpenModel(self._host.request_id, path))))
+            lambda path: self._deliver(OpenModel(self._host.request_id, path)),
+            self._script_dir))
         self._next_id = 1
+        self._run_file: str | None = None
         self._closed = False
         self._lock = threading.Lock()
         self._current: int | None = None
@@ -373,6 +375,7 @@ class InProcessKernelClient(KernelClient):
             status = "cancelled"
         else:
             try:
+                self._run_file = file
                 self._interp.execute(to_function_syntax(code), file, reset_cancel=False)
             except Cancelled:
                 status = "cancelled"
@@ -406,6 +409,15 @@ class InProcessKernelClient(KernelClient):
                 continue
             self._interp.functions[name] = fn
         return categories
+
+    def _script_dir(self):
+        """Folder of the script being run (F5 on a saved file), or None."""
+        from pathlib import Path
+
+        f = self._run_file
+        if f and Path(f).is_file():
+            return Path(f).resolve().parent
+        return None
 
     def _flush_figures(self) -> None:
         try:

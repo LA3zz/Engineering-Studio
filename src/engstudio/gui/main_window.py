@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from engstudio.app.kernel.client import KernelClient
-from engstudio.app.kernel.protocol import ExecutionFinished, FigureClosed, FigureUpdate
+from engstudio.app.kernel.protocol import ExecutionFinished, FigureClosed, FigureUpdate, OpenModel
 from engstudio.core.errors import EngStudioError
 from engstudio.gui.command_window import CommandWindow
 from engstudio.gui.diagnostics_panel import DiagnosticsPanel
@@ -49,8 +49,9 @@ def about_text() -> str:
         "<p>An offline, MATLAB-style environment for engineering students: Command Window, "
         "script editor (.m files), workspace, numerical engine, symbolic math, ODE solvers, "
         "2-D/3-D plotting and control systems.</p>"
-        "<p><b>Status:</b> scripting, math engine and plotting complete; control systems "
-        "and PID in progress; simulation (block diagrams) and engineering toolboxes planned.</p>"
+        "<p><b>Status:</b> scripting, math engine, plotting, control systems and block-diagram "
+        "simulation complete; Mechanical Engineering toolbox included; more toolboxes "
+        "planned.</p>"
         f"<p>Python {platform.python_version()}, Qt (PySide6) {PySide6.__version__}</p>"
         "<p>Built with open-source software: NumPy, SciPy, SymPy, Matplotlib, PyQtGraph, "
         "python-control, Qt for Python (PySide6, LGPL). Not affiliated with MathWorks; "
@@ -77,6 +78,7 @@ class MainWindow(QMainWindow):
         self.bridge = KernelBridge(kernel, self) if kernel is not None else None
         self.command_window = None
         self.figures: dict[int, FigureWindow] = {}
+        self.sim_editors: list = []  # open block-diagram editors (Simulation menu)
         self.custom_themes = CustomThemes.from_data(self.settings.get("custom_themes"))
         self._custom_actions: dict[str, QAction] = {}
         self._theme_group: QActionGroup | None = None
@@ -121,6 +123,7 @@ class MainWindow(QMainWindow):
         self.folder_panel = folder if isinstance(folder, FolderPanel) else None
         if self.folder_panel is not None:
             self.folder_panel.open_file_requested.connect(self.tabs.open_path)
+        self.folder_panel.open_model_requested.connect(self.open_model)
         tools = self.docks["toolboxes"].widget()
         self.toolbox_panel = tools if isinstance(tools, ToolboxPanel) else None
         if self.toolbox_panel is not None:
@@ -178,6 +181,10 @@ class MainWindow(QMainWindow):
         self.act_toggle_theme = self._action("Toggle Light/Dark", self.toggle_theme,
                                              "Ctrl+Shift+T")
         self.act_about = self._action("&About", self.show_about)
+        self.act_new_model = self._action("&New Model", self.new_model,
+                                          tip="Open the block-diagram editor with a new model")
+        self.act_open_model = self._action("&Open Model...", self.open_model_dialog,
+                                           tip="Open a .esmodel simulation model")
         self.act_updates = self._action("Check for &Updates...", self.check_updates,
                                         tip="Ask GitHub whether a newer version exists")
         self.act_customize = self._action("&Customize...", self.customize_theme,
@@ -226,6 +233,9 @@ class MainWindow(QMainWindow):
 
         run = mb.addMenu("&Run")
         run.addActions([self.act_run, self.act_run_selection, self.act_stop])
+
+        sim = mb.addMenu("&Simulation")
+        sim.addActions([self.act_new_model, self.act_open_model])
 
         help_menu = mb.addMenu("&Help")
         help_menu.addAction(self.act_updates)
@@ -349,6 +359,8 @@ class MainWindow(QMainWindow):
             self.show_figure(event.figure)
         elif isinstance(event, FigureClosed):
             self.close_figure(event.number)
+        elif isinstance(event, OpenModel):
+            self.open_model(event.path)
         elif isinstance(event, ExecutionFinished):
             text = {"ok": "Done", "error": "Finished with errors", "cancelled": "Stopped"}
             self.statusBar().showMessage(text.get(event.status, "Done"), 4000)
@@ -565,6 +577,34 @@ class MainWindow(QMainWindow):
     def _close_current(self) -> None:
         if self.tabs.count():
             self.tabs.close_tab(self.tabs.currentIndex())
+
+    def new_model(self):
+        """Simulation > New Model: an empty block-diagram editor."""
+        from engstudio.gui.sim_editor import SimEditor
+
+        editor = SimEditor(theme=self.base_theme(), parent=self)
+        self.sim_editors.append(editor)
+        editor.show()
+        return editor
+
+    def open_model(self, path: str):
+        """Open a .esmodel in the editor (Simulation menu, Current Folder, open_system)."""
+        from engstudio.gui.sim_editor import SimEditor
+
+        editor = SimEditor(theme=self.base_theme(), parent=self)
+        if not editor.open_path(path):
+            editor.deleteLater()
+            return None
+        self.sim_editors.append(editor)
+        editor.show()
+        editor.raise_()
+        return editor
+
+    def open_model_dialog(self) -> None:
+        name, _ = QFileDialog.getOpenFileName(self, "Open model", str(Path.cwd()),
+                                              "Simulation models (*.esmodel)")
+        if name:
+            self.open_model(name)
 
     def check_updates(self) -> None:
         """Help > Check for Updates: one request to GitHub, only when clicked."""

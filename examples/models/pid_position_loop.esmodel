@@ -1,0 +1,176 @@
+{
+  "format": "engstudio-model",
+  "schema_version": 1,
+  "name": "pid_position_loop",
+  "settings": {
+    "start_time": 0.0,
+    "stop_time": 3.0,
+    "solver": "ode45",
+    "rel_tol": 0.001,
+    "abs_tol": 1e-06,
+    "max_step": 0.002,
+    "fixed_step": 0.01
+  },
+  "blocks": [
+    {
+      "id": "Ref",
+      "type": "Step",
+      "name": "reference",
+      "params": {
+        "StepTime": 0.2
+      },
+      "position": [
+        20.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Error",
+      "type": "Sum",
+      "name": "Error",
+      "params": {
+        "Signs": "+-"
+      },
+      "position": [
+        150.0,
+        100.0
+      ],
+      "size": [
+        40.0,
+        50.0
+      ]
+    },
+    {
+      "id": "PID",
+      "type": "PIDController",
+      "name": "PID",
+      "params": {
+        "P": 20.0,
+        "I": 5.0,
+        "D": 1.0,
+        "N": 100.0,
+        "UpperLimit": 24.0,
+        "LowerLimit": -24.0
+      },
+      "position": [
+        240.0,
+        100.0
+      ],
+      "size": [
+        80.0,
+        50.0
+      ]
+    },
+    {
+      "id": "Motor",
+      "type": "TransferFcn",
+      "name": "Motor",
+      "params": {
+        "Num": [
+          0.5
+        ],
+        "Den": [
+          0.01,
+          0.1,
+          0.0
+        ]
+      },
+      "position": [
+        380.0,
+        100.0
+      ],
+      "size": [
+        90.0,
+        50.0
+      ]
+    },
+    {
+      "id": "Scope1",
+      "type": "Scope",
+      "name": "Scope1",
+      "params": {
+        "NumInputs": 2.0,
+        "Title": "Reference and angle"
+      },
+      "position": [
+        560.0,
+        90.0
+      ],
+      "size": [
+        60.0,
+        60.0
+      ]
+    },
+    {
+      "id": "Theta",
+      "type": "ToWorkspace",
+      "name": "Theta",
+      "params": {
+        "VariableName": "theta"
+      },
+      "position": [
+        560.0,
+        200.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "src": "Ref",
+      "src_port": 1,
+      "dst": "Error",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Error",
+      "src_port": 1,
+      "dst": "PID",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "PID",
+      "src_port": 1,
+      "dst": "Motor",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Motor",
+      "src_port": 1,
+      "dst": "Error",
+      "dst_port": 2,
+      "points": []
+    },
+    {
+      "src": "Ref",
+      "src_port": 1,
+      "dst": "Scope1",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Motor",
+      "src_port": 1,
+      "dst": "Scope1",
+      "dst_port": 2,
+      "points": []
+    },
+    {
+      "src": "Motor",
+      "src_port": 1,
+      "dst": "Theta",
+      "dst_port": 1,
+      "points": []
+    }
+  ]
+}

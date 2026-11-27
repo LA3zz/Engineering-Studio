@@ -1,5 +1,6 @@
 # HANDOFF
-Last updated: 2026-11-27, version 0.6.0: Phases 1-6 done, P10a done, B2b closed.
+Last updated: 2026-11-27, version 0.7.0: Phases 1-7 done, Mechanical toolbox done, P10a/P10b
+done (installer, GitHub). 2444 tests pass.
 Full history: CHANGELOG.md and TASKS.md. The long pre-Phase-5 handoff is in the backup zip
 `es_snapshot_before_P5_2.zip` (docs/project/HANDOFF.md).
 
@@ -61,13 +62,11 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
 New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
 name to `toolboxes.BUILTIN`).
-Phase 7 S5: compiler `sim/compiler.py`: resolve every block (sim.blocks.resolve), check ports
-(every input connected, port numbers in range), topological sort of direct-feedthrough blocks,
-algebraic-loop error naming the blocks, continuous state-vector layout (offsets per block),
-breakpoint collection. Done: S1 model/.esmodel, S2 framework + math, S3 sources (breakpoints),
-S4 continuous (Integrator with limits, TransferFcn via own tf_to_ss, StateSpace, Derivative;
-`sim.blocks.feedthrough(block)` may depend on parameters). Plan S1-S17 in TASKS.md.
-Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `sim/blocks.py`.
+Phase 7 is done (version 0.7.0): `sim` package (model, serialization, blocks*, compiler,
+runner, subsystems), `app/sim_bindings.py` (sim/open_system), `app/sim_service.py` and
+`gui/sim_editor.py`. Next: Phase 8 toolboxes (thermodynamics, fluids, heat transfer,
+electrical, structural/2-D FEA) following the mechanical pattern; then Phase 9 integration/QA.
+Attach: TASKS.md, `toolboxes/mechanical/__init__.py`, `app/toolbox_bindings.py`.
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
 performance (compile anonymous functions; `sum(x, 'all')`).

@@ -100,7 +100,7 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] (2026-11-27) C4 pidtune command, docs page control-systems.md, examples/control_pid_example.m,
     control section in examples/full_feature_test.m (132 checks)
   - Backlog: MIMO responses, time delays, pid objects/pidTuner app, discrete PID, sisotool
-- [~] Phase 7 simulation environment (started 2026-11-27; ARCHITECTURE section 8)
+- [x] Phase 7 simulation environment (done 2026-11-27; ARCHITECTURE section 8)
   - [x] (2026-11-27) S1 `sim.model` (Model, Block, Line, SolverSettings) + `sim.serialization` (.esmodel JSON)
   - [x] (2026-11-27) S2 block framework (`sim.blocks`: ports, parameters, kinds) + math blocks: Gain, Sum,
     Product, Constant, Abs, Math Function
@@ -114,11 +114,11 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] (2026-11-27) S10 control blocks: PID Controller (from control.lti), Transport Delay
   - [x] (2026-11-27) S11 subsystems (flatten in the compiler)
   - [x] (2026-11-27) S12 kernel integration: `sim('model.esmodel')`, results to workspace, scope figures
-  - [ ] S13 GUI canvas: block library, drag and drop, move/select/delete
-  - [ ] S14 wiring: ports, lines, branching, routing
-  - [ ] S15 block parameter dialogs
-  - [ ] S16 Run/Stop toolbar, scope windows, simulation settings
-  - [ ] S17 open/save .esmodel, example models (mass-spring-damper, PID loop), docs page
+  - [x] (2026-11-27) S13 GUI canvas: block library, drag and drop, move/select/delete
+  - [x] (2026-11-27) S14 wiring: ports, lines, branching, routing
+  - [x] (2026-11-27) S15 block parameter dialogs
+  - [x] (2026-11-27) S16 Run/Stop toolbar, scope windows, simulation settings
+  - [x] (2026-11-27) S17 open/save .esmodel, example models (mass-spring-damper, PID loop), docs page
 - [~] Phase 8 engineering toolboxes (one at a time)
   - [x] (2026-11-27) Mechanical Engineering: sections, stress, Mohr, von Mises, buckling, beams,
     vibrations (sdof, sdof_free, sdof_forced, transmissibility, log_decrement, modes), springs,

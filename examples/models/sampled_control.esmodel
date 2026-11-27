@@ -1,0 +1,162 @@
+{
+  "format": "engstudio-model",
+  "schema_version": 1,
+  "name": "sampled_control",
+  "settings": {
+    "start_time": 0.0,
+    "stop_time": 8.0,
+    "solver": "ode45",
+    "rel_tol": 0.001,
+    "abs_tol": 1e-06,
+    "max_step": 0.01,
+    "fixed_step": 0.01
+  },
+  "blocks": [
+    {
+      "id": "Ref",
+      "type": "Step",
+      "name": "Ref",
+      "params": {
+        "StepTime": 0.0
+      },
+      "position": [
+        20.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Error",
+      "type": "Sum",
+      "name": "Error",
+      "params": {
+        "Signs": "+-"
+      },
+      "position": [
+        140.0,
+        100.0
+      ],
+      "size": [
+        40.0,
+        50.0
+      ]
+    },
+    {
+      "id": "Sampler",
+      "type": "ZeroOrderHold",
+      "name": "Sampler",
+      "params": {
+        "SampleTime": 0.2
+      },
+      "position": [
+        230.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Kp",
+      "type": "Gain",
+      "name": "Kp",
+      "params": {
+        "K": 3.0
+      },
+      "position": [
+        350.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Plant",
+      "type": "TransferFcn",
+      "name": "Plant",
+      "params": {
+        "Num": [
+          1.0
+        ],
+        "Den": [
+          1.0,
+          1.0
+        ]
+      },
+      "position": [
+        470.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    },
+    {
+      "id": "Scope1",
+      "type": "Scope",
+      "name": "Scope1",
+      "params": {
+        "Title": "Sampled control: output"
+      },
+      "position": [
+        620.0,
+        100.0
+      ],
+      "size": [
+        60.0,
+        40.0
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "src": "Ref",
+      "src_port": 1,
+      "dst": "Error",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Error",
+      "src_port": 1,
+      "dst": "Sampler",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Sampler",
+      "src_port": 1,
+      "dst": "Kp",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Kp",
+      "src_port": 1,
+      "dst": "Plant",
+      "dst_port": 1,
+      "points": []
+    },
+    {
+      "src": "Plant",
+      "src_port": 1,
+      "dst": "Error",
+      "dst_port": 2,
+      "points": []
+    },
+    {
+      "src": "Plant",
+      "src_port": 1,
+      "dst": "Scope1",
+      "dst_port": 1,
+      "points": []
+    }
+  ]
+}

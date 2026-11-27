@@ -11,6 +11,7 @@ Offline engineering computation environment. Pages:
 - [Figures and export](figures.md)
 - [Control systems and PID](control-systems.md)
 - [Mechanical Engineering toolbox](mechanical.md)
+- [Simulation (block diagrams)](simulation.md)
 - [Diagnostics](diagnostics.md)
 - [Layout and themes](layout-and-themes.md)
 - [Math engine API](engine-api.md)

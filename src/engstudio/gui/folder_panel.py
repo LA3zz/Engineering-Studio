@@ -32,6 +32,7 @@ SCRIPT_SUFFIX = ".m"
 
 class FolderPanel(QWidget):
     open_file_requested = Signal(str)  # absolute path of a script to open
+    open_model_requested = Signal(str)  # absolute path of a .esmodel simulation model
     folder_changed = Signal(str)  # absolute path of the new root folder
 
     def __init__(self, settings: UiSettings | None = None, parent: QWidget | None = None) -> None:
@@ -112,12 +113,16 @@ class FolderPanel(QWidget):
             self.set_folder(name)
 
     def activate_path(self, path: Path | str) -> bool:
-        """Folder: enter it. ``.m`` file: request opening. Anything else: ignored."""
+        """Folder: enter it. ``.m`` file: request opening in the editor. ``.esmodel``: request
+        opening in the model editor. Anything else: ignored."""
         p = Path(path)
         if p.is_dir():
             return self.set_folder(p)
         if p.is_file() and p.suffix.lower() == SCRIPT_SUFFIX:
             self.open_file_requested.emit(str(p.resolve()))
+            return True
+        if p.is_file() and p.suffix.lower() == ".esmodel":
+            self.open_model_requested.emit(str(p.resolve()))
             return True
         return False
 

@@ -154,3 +154,14 @@ def test_main_window_integration(app, tree):
         win.tabs.current_editor().document().setModified(False)
         win.close()
         win.deleteLater()
+
+
+def test_activate_esmodel_requests_the_model_editor(qtbot, tmp_path):
+    from engstudio.gui.folder_panel import FolderPanel
+    p = FolderPanel()
+    qtbot.addWidget(p)
+    f = tmp_path / "m.esmodel"
+    f.write_text("{}", encoding="utf-8")
+    got = []
+    p.open_model_requested.connect(got.append)
+    assert p.activate_path(f) and got == [str(f.resolve())]
