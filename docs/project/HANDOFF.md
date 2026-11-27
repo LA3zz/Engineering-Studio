@@ -58,12 +58,11 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
 New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
 name to `toolboxes.BUILTIN`).
-Phase 7 S2: block framework `sim.blocks` (registry of block types: ports, parameters with
-defaults/validation, kind continuous/discrete/algebraic/source/sink, output/derivatives/update
-functions) + math blocks Gain, Sum (Signs '+-'), Product, Constant, Abs, Math Function.
-S1 is done: `sim.model` (immutable Model/Block/Line/SolverSettings, edit methods return new
-models) and `sim.serialization` (.esmodel JSON, schema_version 1). Plan S1-S17 in TASKS.md.
-Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `core/plugin.py` (@sim_block).
+Phase 7 S3: source blocks Step, Sine Wave, Ramp, Clock, Pulse Generator, From Workspace in
+`sim/blocks.py` (or `sim/blocks_sources.py`) using the S2 framework (BlockType, ParamSpec,
+BlockImpl.outputs(t, x, u)). S1 (model, .esmodel) and S2 (block framework + Constant, Gain, Sum,
+Product, Abs, MathFunction) are done. Plan S1-S17 in TASKS.md.
+Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `sim/blocks.py`.
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
 performance (compile anonymous functions; `sum(x, 'all')`).

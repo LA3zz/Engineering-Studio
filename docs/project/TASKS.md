@@ -102,7 +102,7 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - Backlog: MIMO responses, time delays, pid objects/pidTuner app, discrete PID, sisotool
 - [~] Phase 7 simulation environment (started 2026-11-27; ARCHITECTURE section 8)
   - [x] (2026-11-27) S1 `sim.model` (Model, Block, Line, SolverSettings) + `sim.serialization` (.esmodel JSON)
-  - [ ] S2 block framework (`sim.blocks`: ports, parameters, kinds) + math blocks: Gain, Sum,
+  - [x] (2026-11-27) S2 block framework (`sim.blocks`: ports, parameters, kinds) + math blocks: Gain, Sum,
     Product, Constant, Abs, Math Function
   - [ ] S3 sources: Step, Sine Wave, Ramp, Clock, Pulse Generator, From Workspace
   - [ ] S4 continuous: Integrator (initial condition, limits), Transfer Fcn, State-Space, Derivative
