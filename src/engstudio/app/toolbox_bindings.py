@@ -46,6 +46,8 @@ def _arg_in(spec_arg, value: object, fname: str) -> object:
     if not isinstance(value, np.ndarray):
         raise ValidationError(f"{fname}: argument '{spec_arg.name}' must be numeric or text.")
     arr = value.astype(float) if value.dtype == np.bool_ else value
+    if arr.size == 0:  # [] means 'not given' (optional argument / unknown)
+        return None
     shape = spec_arg.shape
     if shape == (None,) or (shape is not None and len(shape) == 1):
         return arr.reshape(-1, order="F")

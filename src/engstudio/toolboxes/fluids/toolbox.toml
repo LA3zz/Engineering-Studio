@@ -1,0 +1,6 @@
+[toolbox]
+name = "fluids"
+display_name = "Fluid Mechanics"
+version = "0.1.0"
+api_version = 1
+category = "fluids"

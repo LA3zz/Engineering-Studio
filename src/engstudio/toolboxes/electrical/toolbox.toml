@@ -1,0 +1,6 @@
+[toolbox]
+name = "electrical"
+display_name = "Electrical and Electronics"
+version = "0.1.0"
+api_version = 1
+category = "electrical"
