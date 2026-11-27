@@ -61,13 +61,13 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
 Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
 New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
 name to `toolboxes.BUILTIN`).
-Phase 7 S4: continuous blocks Integrator (InitialCondition, optional limits), TransferFcn (Num,
-Den via control.lti or own realisation), StateSpace (A, B, C, D, X0), Derivative, in
-`sim/blocks_continuous.py`: BlockImpl with n_states, initial_state(), derivatives(t, x, u) and
-outputs(t, x, u); feedthrough False for strictly proper. Done: S1 model/.esmodel, S2 framework +
-math blocks, S3 sources (Step, SineWave, Ramp, Clock, PulseGenerator, FromWorkspace; blocks report
-breakpoints). Plan S1-S17 in TASKS.md.
-Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/blocks.py`, `sim/blocks_sources.py`.
+Phase 7 S5: compiler `sim/compiler.py`: resolve every block (sim.blocks.resolve), check ports
+(every input connected, port numbers in range), topological sort of direct-feedthrough blocks,
+algebraic-loop error naming the blocks, continuous state-vector layout (offsets per block),
+breakpoint collection. Done: S1 model/.esmodel, S2 framework + math, S3 sources (breakpoints),
+S4 continuous (Integrator with limits, TransferFcn via own tf_to_ss, StateSpace, Derivative;
+`sim.blocks.feedthrough(block)` may depend on parameters). Plan S1-S17 in TASKS.md.
+Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `sim/blocks.py`.
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
 performance (compile anonymous functions; `sum(x, 'all')`).

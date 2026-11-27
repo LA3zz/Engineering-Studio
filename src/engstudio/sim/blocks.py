@@ -23,8 +23,8 @@ import numpy as np
 from engstudio.core.errors import ValidationError
 from engstudio.sim.model import Block
 
-__all__ = ["BLOCK_TYPES", "BlockImpl", "BlockType", "ParamSpec", "block_type", "ports",
-           "register", "resolve"]
+__all__ = ["BLOCK_TYPES", "BlockImpl", "BlockType", "ParamSpec", "block_type", "feedthrough",
+           "ports", "register", "resolve"]
 
 KINDS = ("source", "algebraic", "continuous", "discrete", "sink")
 
@@ -102,7 +102,7 @@ class BlockType:
     params: tuple[ParamSpec, ...]
     n_inputs: Callable[[dict], int]
     n_outputs: Callable[[dict], int]
-    feedthrough: bool  # outputs depend on inputs at the same instant
+    feedthrough: bool | Callable[[dict], bool]  # outputs depend on inputs at the same instant
     impl: Callable[[dict], BlockImpl]
     doc: str = ""
     extra_check: Callable[[str, dict], None] | None = field(default=None, compare=False)
@@ -142,6 +142,13 @@ def resolve(block: Block) -> dict[str, object]:
     if bt.extra_check is not None:
         bt.extra_check(block.id, p)
     return p
+
+
+def feedthrough(block: Block) -> bool:
+    """True if the block's outputs depend directly on its current inputs."""
+    bt = block_type(block.type)
+    ft = bt.feedthrough
+    return bool(ft(resolve(block))) if callable(ft) else bool(ft)
 
 
 def ports(block: Block) -> tuple[int, int]:

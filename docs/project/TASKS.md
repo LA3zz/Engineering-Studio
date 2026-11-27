@@ -105,7 +105,7 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] (2026-11-27) S2 block framework (`sim.blocks`: ports, parameters, kinds) + math blocks: Gain, Sum,
     Product, Constant, Abs, Math Function
   - [x] (2026-11-27) S3 sources: Step, Sine Wave, Ramp, Clock, Pulse Generator, From Workspace
-  - [ ] S4 continuous: Integrator (initial condition, limits), Transfer Fcn, State-Space, Derivative
+  - [x] (2026-11-27) S4 continuous: Integrator (initial condition, limits), Transfer Fcn, State-Space, Derivative
   - [ ] S5 compiler: validation, topological sort, algebraic-loop error, state-vector layout
   - [ ] S6 solver/runner: solve_ivp variable step + fixed-step RK4/Euler, cancel, progress
   - [ ] S7 sinks: Scope (data), To Workspace, Display; analytic validation suite
