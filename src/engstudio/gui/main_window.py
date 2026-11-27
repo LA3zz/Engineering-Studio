@@ -23,8 +23,10 @@ from engstudio.app.kernel.protocol import (
     FigureUpdate,
     FolderChanged,
     OpenModel,
+    ToolboxList,
 )
 from engstudio.core.errors import EngStudioError
+from engstudio.gui.calltip import CATALOG
 from engstudio.gui.command_window import CommandWindow
 from engstudio.gui.diagnostics_panel import DiagnosticsPanel
 from engstudio.gui.docs_panel import DocsPanel
@@ -369,6 +371,8 @@ class MainWindow(QMainWindow):
             self.close_figure(event.number)
         elif isinstance(event, OpenModel):
             self.open_model(event.path)
+        elif isinstance(event, ToolboxList):
+            CATALOG.update(event.toolboxes)  # call tips in the editor and Command Window
         elif isinstance(event, FolderChanged):
             if self.folder_panel is not None:
                 self.folder_panel.set_folder(event.path)

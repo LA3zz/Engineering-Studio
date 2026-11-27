@@ -7,6 +7,7 @@ from pathlib import Path
 from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QFileDialog, QMessageBox, QPlainTextEdit, QTabWidget, QWidget
 
+from engstudio.gui.calltip import CallTipController
 from engstudio.gui.highlighter import ScriptHighlighter
 
 __all__ = ["ScriptEditor", "ScriptTabs"]
@@ -27,6 +28,7 @@ class ScriptEditor(QPlainTextEdit):
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
         self.setTabStopDistance(self.fontMetrics().horizontalAdvance(" ") * 4)
         self.highlighter = ScriptHighlighter(self.document(), theme)
+        self.calltip = CallTipController(self)  # plot(x, -> shows what comes next
 
     @property
     def display_name(self) -> str:

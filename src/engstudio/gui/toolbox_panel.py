@@ -1,7 +1,8 @@
 """Toolbox browser (G3.2): tree of toolboxes and their functions, with a filter box.
 
 Data arrives as a ``ToolboxList`` event through the KernelBridge (the GUI never imports
-toolboxes). Double-clicking a function emits ``insert_requested`` with its name.
+toolboxes). Clicking a function shows how to call it and what each input means in the details
+pane below the tree; double-clicking emits ``insert_requested`` with its name.
 """
 
 from __future__ import annotations
@@ -9,22 +10,28 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
+    QSplitter,
+    QTextBrowser,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
 
-from engstudio.app.kernel.protocol import ToolboxInfo, ToolboxList
+from engstudio.app.kernel.protocol import ToolboxFunction, ToolboxInfo, ToolboxList
 from engstudio.core.errors import EngStudioError
 from engstudio.gui.kernel_bridge import KernelBridge
 
 __all__ = ["ToolboxPanel"]
 
 _ROLE = Qt.ItemDataRole.UserRole  # function items store their name; toolbox items store None
+_HELP = Qt.ItemDataRole.UserRole + 1  # function items: the ToolboxFunction (help text)
+_HINT = "Click a function to see how to call it and what its inputs mean. Double-click to " \
+        "insert it into the Command Window."
 
 
 class ToolboxPanel(QWidget):
@@ -43,16 +50,26 @@ class ToolboxPanel(QWidget):
         self.tree.setHeaderHidden(True)
         self.status = QLabel()
         self.status.setWordWrap(True)
+        self.details = QTextBrowser()
+        self.details.setOpenLinks(False)
+        self.details.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
+        self.details.setPlaceholderText(_HINT)
+        split = QSplitter(Qt.Orientation.Vertical)
+        split.addWidget(self.tree)
+        split.addWidget(self.details)
+        split.setStretchFactor(0, 3)
+        split.setStretchFactor(1, 2)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.addWidget(self.filter_edit)
-        layout.addWidget(self.tree, 1)
+        layout.addWidget(split, 1)
         layout.addWidget(self.status)
         self.setMinimumSize(140, 80)
 
         self.filter_edit.textChanged.connect(self.apply_filter)
         self.tree.itemDoubleClicked.connect(lambda item, _col: self.activate_item(item))
+        self.tree.currentItemChanged.connect(lambda item, _prev: self.show_details(item))
         if bridge is None:
             self.status.setText("No kernel connected.")
         else:
@@ -81,7 +98,8 @@ class ToolboxPanel(QWidget):
             for fn in tb.functions:
                 child = QTreeWidgetItem([fn.name])
                 child.setData(0, _ROLE, fn.name)
-                tip = f"{fn.signature}\n{fn.summary}".strip()
+                child.setData(0, _HELP, fn)
+                tip = f"{fn.signature.replace(' | ', chr(10))}\n{fn.summary}".strip()
                 if tip:
                     child.setToolTip(0, tip)
                 top.addChild(child)
@@ -113,6 +131,16 @@ class ToolboxPanel(QWidget):
             self.status.setText(f"{shown} of {total} functions")
         else:
             self.status.setText(f"{len(self._index)} toolboxes, {total} functions")
+
+    def show_details(self, item: QTreeWidgetItem | None) -> None:
+        """Show the help of the selected function (calling forms, inputs, outputs, example)."""
+        fn = item.data(0, _HELP) if item is not None else None
+        if not isinstance(fn, ToolboxFunction):
+            self.details.clear()
+            return
+        text = fn.help or "\n".join(filter(None, [fn.signature.replace(" | ", "\n"), "",
+                                                  fn.summary]))
+        self.details.setPlainText(text or f"{fn.name}(...)")
 
     def activate_item(self, item: QTreeWidgetItem) -> bool:
         """Function item: request insertion of its name. Toolbox item: nothing."""

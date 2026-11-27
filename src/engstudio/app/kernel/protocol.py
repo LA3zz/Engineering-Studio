@@ -80,7 +80,10 @@ class ToolboxFunction:
 
     name: str
     summary: str  # one line
-    signature: str = ""  # e.g. "inv(A)"
+    signature: str = ""  # calling forms separated by " | ", e.g. "plot(y) | plot(x, y)"
+    help: str = ""  # full help text (inputs, outputs, example)
+    params: tuple[str, ...] = ()  # argument names in order (toolbox functions)
+    param_docs: tuple[str, ...] = ()  # meaning/unit/limits/default of each argument
 
 
 @dataclass(frozen=True)

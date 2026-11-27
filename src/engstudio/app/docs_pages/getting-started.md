@@ -1,12 +1,18 @@
 # Getting started
 
-The window has a script editor in the centre and panels around it: Current Folder,
-Workspace, Command Window, Toolboxes, Diagnostics and Documentation.
+The window has a script editor in the centre and panels around it: Current Folder and
+Toolboxes on the left, Workspace and Documentation on the right, Command Window and
+Diagnostics at the bottom. Show or hide panels from View > Panels (Ctrl+Shift+1 ... 6).
 
-**Current status:** the interface is complete for these panels, but the computation kernel
-is a stand-in. The Command Window only understands `name = number`, `name`, `clc` and
-`demo_plot`. Scripts can be edited and saved but not run yet.
+1. Type `x = linspace(0, 2*pi); plot(x, sin(x)); grid on` in the Command Window and press
+   Enter: a figure window opens.
+2. Press Ctrl+N for a new script, write some commands, save it (Ctrl+S) and press F5 to run.
+3. Open the Toolboxes panel, click a function (for example Mechanical Engineering > sdof) and
+   read what its inputs mean; or type `help sdof`.
+4. Try the examples in the `examples` folder of the installation, starting with
+   `full_feature_test.m`.
 
-Next: [Command Window](command-window.md), [Layout and themes](layout-and-themes.md).
+Next: [Command Window](command-window.md), [Script editor](script-editor.md),
+[Toolbox browser](toolboxes.md).
 
 [Back to index](index.md)

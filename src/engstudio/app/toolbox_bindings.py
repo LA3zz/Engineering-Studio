@@ -115,3 +115,11 @@ def toolbox_builtins() -> tuple[dict[str, Builtin], dict[str, tuple[str, tuple[s
             builtins[spec.name] = _wrap(spec)
         categories[f"tb_{name}"] = (display, tuple(s.name for s in specs))
     return builtins, categories
+
+
+def toolbox_help_table() -> dict[str, object]:
+    """``FunctionHelp`` for every toolbox function, by name."""
+    from engstudio.app.function_help import toolbox_help
+
+    return {spec.name: toolbox_help(spec, display)
+            for _name, display, specs in load_toolboxes() for spec in specs}

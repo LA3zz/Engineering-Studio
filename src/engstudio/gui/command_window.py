@@ -31,6 +31,7 @@ from PySide6.QtWidgets import (
 from engstudio.app.input_state import needs_more
 from engstudio.app.kernel.protocol import Diagnostics, Stdout
 from engstudio.core.errors import EngStudioError
+from engstudio.gui.calltip import CallTipController
 from engstudio.gui.history import CommandHistory
 from engstudio.gui.kernel_bridge import KernelBridge
 
@@ -102,6 +103,7 @@ class CommandWindow(QWidget):
         self.prompt.setFont(mono)
         self.input = _InputLine(self.history)
         self.input.setFont(mono)
+        self.calltip = CallTipController(self.input, above=True)
         self.run_button = QPushButton("Run")
 
         row = QHBoxLayout()

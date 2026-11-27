@@ -1,6 +1,17 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Function help, call tips, details pane
+- Help for every command (`app/help_core.py`: calling forms + summary for all core commands;
+  `app/help_toolbox.py`: meaning of every toolbox input + a tested example per function;
+  `app/function_help.py` adds units, limits, defaults, outputs and result-struct fields).
+- Toolbox browser: clicking a function shows its full help in a details pane.
+- Call tips in the script editor and Command Window: typing `plot(x, ` shows the calling forms
+  with the current input in bold, greyed forms that cannot take it, and the input's meaning
+  for toolbox functions (`gui/calltip.py`; data comes from the kernel's ToolboxList).
+- `help name` command. Docs pages for the Command Window, editor, toolbox browser and getting
+  started rewritten for the current app.
+
 ## 2026-11-27 - Phase 9 integration/QA, version 0.8.0 build
 - The Current Folder is the working folder (as in MATLAB): the panel changes the process
   folder, `cd folder` / `cd ..` / `cd('path')` and `pwd` are builtins, and a `FolderChanged`

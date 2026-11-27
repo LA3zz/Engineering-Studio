@@ -66,7 +66,7 @@ FIGURE_INTERVAL = 1 / 30  # seconds between updates of one figure (animation thr
 
 _COMMAND = re.compile(
     r"^(\s*)(clear|clearvars|clc|format|more|close|syms|hold|figure|clf|cla|drawnow|grid|axis|"
-    r"legend|box|shading|colorbar|colormap)"
+    r"legend|box|shading|colorbar|colormap|help)"
     r"((?:[ \t]+[A-Za-z_][\w.*]*)*)[ \t]*(?:([;,])[ \t]*(.*)|(%.*))?$"
 )
 
@@ -143,7 +143,7 @@ _CATEGORIES: dict[str, tuple[str, tuple[str, ...]]] = {
         "shading", "polarplot", "errorbar", "xline", "yline", "pause", "animatedline",
         "addpoints", "clearpoints", "saveas", "print", "exportgraphics")),
     "workspace": ("Workspace", ("clear", "clearvars", "clc", "format", "more", "who", "whos",
-                                "exist")),
+                                "exist", "help")),
 }
 
 
@@ -264,6 +264,8 @@ class InProcessKernelClient(KernelClient):
             min_interval=FIGURE_INTERVAL)
         install_control_plots(self._interp, self._figures)
         self._interp.functions.update(self._workspace_commands())
+        self._help_table: dict[str, object] | None = None
+
         def folder_changed(path: str) -> None:
             self._deliver(FolderChanged(self._host.request_id, path))
 
@@ -340,14 +342,34 @@ class InProcessKernelClient(KernelClient):
             present = sorted(n for n in names if n in available)
             listed.update(present)
             if present:
-                boxes.append(ToolboxInfo(key, title, tuple(
-                    ToolboxFunction(n, "", f"{n}(...)") for n in present)))
+                boxes.append(ToolboxInfo(key, title, tuple(self._function_entry(n)
+                                                           for n in present)))
         rest = sorted(available - listed)
         if rest:
             boxes.append(ToolboxInfo("other", "Other functions", tuple(
-                ToolboxFunction(n, "", f"{n}(...)") for n in rest)))
+                self._function_entry(n) for n in rest)))
         self._emit(ToolboxList(rid, tuple(boxes)))
         return rid
+
+    def function_help(self, name: str):
+        """``FunctionHelp`` for a core or toolbox function, or None."""
+        from engstudio.app.function_help import core_help
+
+        if self._help_table is None:
+            try:
+                from engstudio.app.toolbox_bindings import toolbox_help_table
+
+                self._help_table = toolbox_help_table()
+            except Exception:
+                _log.exception("toolbox help failed to load")
+                self._help_table = {}
+        return self._help_table.get(name) or core_help(name)
+
+    def _function_entry(self, name: str) -> ToolboxFunction:
+        h = self.function_help(name)
+        if h is None:
+            return ToolboxFunction(name, "", f"{name}(...)")
+        return ToolboxFunction(name, h.summary, h.signature, h.text, h.params, h.param_docs)
 
     # ----------------------------------------------------------------- internals
     def _new_id(self) -> int:
@@ -523,5 +545,25 @@ class InProcessKernelClient(KernelClient):
                 code = 0.0
             return [np.array([[code]])]
 
+        def help_(args: list, nargout: int) -> list:
+            (name,) = names_of(args[:1]) or [""]
+            if not name:
+                text = ("Use help name, e.g. help plot or help sdof. The Toolbox browser lists "
+                        "every function; click one to see its inputs.")
+            elif name in interp.user_functions:
+                text = f"{name} is a function defined in your script."
+            else:
+                h = self.function_help(name)
+                if h is None:
+                    known = name in interp.functions
+                    text = (f"{name} is a built-in function (no detailed help yet)." if known
+                            else f"{name} not found.")
+                else:
+                    text = h.text
+            if nargout:
+                return [CharArray.from_str(text)]
+            host.write(text + "\n\n")
+            return []
+
         return {"clear": clear, "clearvars": clear, "clc": noop, "more": noop, "format": fmt,
-                "who": who, "whos": whos, "exist": exist}
+                "who": who, "whos": whos, "exist": exist, "help": help_}
