@@ -139,7 +139,12 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] Docs pages for every toolbox, 5 new examples (+ examples/data/tensile_test.csv),
     feature script +16 checks, tests/toolboxes/test_examples_run.py runs every example
   - Backlog: 3-D FEA, mesh import, modal FEA, steam tables, compressible flow, Bode for circuits
-- [ ] Phase 9 integration and quality assurance
+- [x] Phase 9 integration and quality assurance (done 2026-11-27; 2502 tests, 170/170 numerics)
+  - [x] every example script runs in the test suite (incl. full_feature_test.m checks)
+  - [x] toolbox names never hidden by core builtins; all 9 toolboxes listed in the browser
+  - [x] Current Folder = working folder (panel chdir, `cd`/`pwd` builtins, FolderChanged event)
+  - [x] docs: every page linked from the index, links resolve, every toolbox function documented
+  - [x] TEST_STATUS, FILE_STRUCTURE refreshed
 - [~] Phase 10 packaging: [x] P10a desktop shortcut, Open with for .m, single instance (2026-11-27);
   [~] P10b (2026-11-27): GUI in the PyInstaller spec (EngineeringStudio.exe windowed +
   engstudio-console.exe), Inno Setup installer (per user, Open with, uninstaller, notices),

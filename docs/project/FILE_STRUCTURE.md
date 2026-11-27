@@ -193,3 +193,11 @@ Rules: no module in `src` over ~600 lines without review; one responsibility per
 - tests/gui/test_theme_editor_gui.py
 - Edited: src/engstudio/gui/theme.py, src/engstudio/gui/main_window.py,
   src/engstudio/app/docs_pages/layout-and-themes.md
+
+## Added Phase 8-9 (2026-11-27)
+- src/engstudio/toolboxes/{thermo,fluids,heat,electrical,materials,structures,robotics,aero}/ (toolbox.toml, __init__.py, functions.py)
+- src/engstudio/app/file_bindings.py - readmatrix/readtable/writematrix/writetable/csv*/xls*, cd, pwd
+- src/engstudio/app/docs_pages/{thermo-fluids,electrical,materials-lab-data,structures-fea,robotics-aerospace}.md
+- examples/{thermo_fluids,electrical,fea,lab_data,robotics_aero}_example.m, examples/data/tensile_test.csv
+- tests/toolboxes/test_{thermofluids,electrical,materials_files,structures,robotics_aero,toolbox_kernel,examples_run}.py
+- tests/app/test_kernel_cd.py, tests/app/test_docs_pages.py

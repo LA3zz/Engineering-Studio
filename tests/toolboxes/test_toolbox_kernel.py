@@ -34,6 +34,21 @@ def test_no_toolbox_function_is_hidden_by_a_core_builtin(kernel):
     assert not hidden, f"toolbox names taken by core builtins: {hidden}"
 
 
+def test_all_toolboxes_are_listed(kernel):
+    from engstudio.app.kernel.protocol import ToolboxList
+    from engstudio.toolboxes import BUILTIN
+
+    events = []
+    kernel.subscribe(events.append)
+    kernel.list_toolboxes()
+    listing = [e for e in events if isinstance(e, ToolboxList)][-1]
+    names = {tb.display_name for tb in listing.toolboxes}
+    assert {"Mechanical Engineering", "Thermodynamics", "Fluid Mechanics", "Heat Transfer",
+            "Electrical and Electronics", "Materials and Lab Data", "Structures and FEA",
+            "Robotics", "Aerospace", "Files and lab data"} <= names, names
+    assert len(BUILTIN) == 9
+
+
 def test_toolbox_functions_run_from_scripts(kernel):
     ws = run(kernel, "eta = cycle_efficiency('carnot', 800, 300); e = eta.efficiency;"
                      " f = friction_factor(1000); R = conduction_resistance('plane', 0.5, 0.1, 2);"

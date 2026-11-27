@@ -1,22 +1,22 @@
 # TEST_STATUS
-Last updated: 2026-11-18 (end of Phase 2)
+Last updated: 2026-11-27 (end of Phase 9, before the 0.8.0 build)
 
-| Suite | Location | Status |
+| Suite | Location / command | Status |
 |---|---|---|
-| all tests | pytest -q | 94 passed in 8.98s |
-| unit | tests/unit | included above (version, errors/diagnostics, units, plugin/registry, offline guard, selftest) |
-| architecture (import rules) | tests/architecture | 17 tests, included above |
-| offline guard | tests/conftest.py | active for every test |
-| lint | ruff check . | All checks passed |
-| frozen smoke (build) | packaging\build.ps1 | PASSED on dev PC: onedir 282 MB; `--version`, `--selftest` (11/11, normal and minimal PATH), `--selftest-gui` all exit 0 |
-| frozen startup time | same | selftest wall time 19.4 s first run, 6.3 s on later run (scipy import dominates) |
-| clean PC (no Python) | manual | NOT YET DONE (task T2.7b) |
-| numerical validation | tests/validation | not created |
-| interpreter conformance | tests/conformance | not created |
-| GUI (pytest-qt, offscreen) | tests/gui | not created |
-| integration (kernel e2e) | tests/integration | not created |
+| non-GUI tests | `pytest -q tests --ignore=tests\gui` | 2198 passed in 61 s |
+| GUI tests (offscreen) | `pytest -q tests\gui` (QT_QPA_PLATFORM=offscreen) | 304 passed in 76 s |
+| lint | `ruff check .` | All checks passed |
+| numerics validation | `python tools\validate_numerics.py` | 170 / 170 |
+| architecture (layer rules, import cycles) | tests/architecture | included above |
+| toolboxes (9 toolboxes, 85 functions) | tests/toolboxes | included above; hand calculations and textbook values |
+| every example script runs clean | tests/toolboxes/test_examples_run.py | 10 scripts, incl. full_feature_test.m (no FAIL lines) |
+| docs complete, links resolve | tests/app/test_docs_pages.py | included above |
+| offline guard | tests/conftest.py | active for every test; working folder restored after each test |
+| frozen build smoke | packaging\build.ps1 | see Phase 10 entry below |
+| clean PC (no Python) | manual | NOT DONE (task T2.7b needs a second PC or VM) |
 
-Environment: Windows 10 (build 26300), Python 3.11.9. See DEPENDENCIES.md for versions.
+Environment: Windows 11 (build 26300), Python 3.11.9. Run the non-GUI and GUI folders in
+separate processes (a single-process full run hung twice on 2026-11-27; not reproduced).
 ## 2026-11-18 (Windows 10, Python 3.11.9, user-run)
 - `python -m pytest tests\gui tests\lang tests\architecture -q`: 81 passed in 2.13 s (includes 42 lexer tests; GUI tests run headless/offscreen).
 - `python -m ruff check src\engstudio\gui tests\gui` and `src\engstudio\lang tests\lang`: all checks passed.
