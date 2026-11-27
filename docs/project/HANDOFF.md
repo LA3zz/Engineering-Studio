@@ -23,6 +23,10 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
   (PyQtGraph 2-D), `gui.mpl_view` (embedded Matplotlib for 3-D/polar/contour/surface).
 - The user's vibrations scripts (Code.m, Lab 3/5/6) run end to end with F5.
 - Run GUI: desktop shortcut, or `python -m engstudio.gui [file.m]` (single instance).
+- User manual: `python tools/make_manual.py` rebuilds docs/manual/Engineering_Studio_User_Manual.pdf
+  (chapters in docs/manual/chapters.html; references generated from app/help_core.py,
+  app/help_toolbox.py and the block registry; needs Microsoft Edge; `--html` skips the PDF).
+  Function help (Toolbox details pane, `help name`, call tips) uses the same help tables.
   `packaging/install_desktop.ps1` (re)creates shortcuts and Open with. Self-check script:
   `examples/full_feature_test.m` (PASS/FAIL lines, about 10 s); `examples/control_pid_example.m`.
 

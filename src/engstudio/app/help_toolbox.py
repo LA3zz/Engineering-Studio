@@ -7,7 +7,7 @@ example and checks that every input of every toolbox function is described here.
 
 from __future__ import annotations
 
-__all__ = ["ARG_DOCS", "EXAMPLES"]
+__all__ = ["ARG_DOCS", "EXAMPLES", "FIELD_DOCS"]
 
 ARG_DOCS: dict[str, dict[str, str]] = {
     # ------------------------------------------------------------------ mechanical
@@ -315,4 +315,46 @@ EXAMPLES: dict[str, str] = {
     "rocket_dv": "dv = rocket_dv(320, 50e3, 15e3)",
     "orbit": "o = orbit(400e3)",
     "hohmann": "h = hohmann(6771e3, 42164e3)",
+}
+
+# Result-struct fields (by result class name) whose source comment is missing or too short.
+FIELD_DOCS: dict[str, dict[str, str]] = {
+    "Section": {"Iy": "second moment of area about y, m^4", "Sy": "section modulus about y, m^3",
+                "ry": "radius of gyration about y, m"},
+    "Mohr": {"center": "centre of Mohr's circle (sx + sy)/2, Pa",
+             "radius": "radius of Mohr's circle, Pa"},
+    "BeamResult": {"x": "positions along the beam, m", "slope": "slope of the deflected beam, rad",
+                   "x_max_deflection": "position of the largest deflection, m",
+                   "x_max_moment": "position of the largest bending moment, m"},
+    "Sdof": {"fn": "natural frequency, Hz", "fd": "damped natural frequency, Hz"},
+    "Decrement": {"zeta": "damping ratio"},
+    "Modes": {"fn": "natural frequencies, Hz"},
+    "GearPair": {"d2": "pitch diameter of the driven gear, m",
+                 "center_distance": "distance between the gear centres, m"},
+    "FourBar": {"omega4": "angular velocity of the output rocker, rad/s",
+                "y": "joint y coordinates [O2 A B O4]"},
+    "Process": {"p2": "final pressure, Pa", "V2": "final volume, m^3", "T2": "final temperature, K",
+                "dU": "change of internal energy, J"},
+    "Cycle": {"efficiency": "thermal efficiency (0..1)"},
+    "PipeFlow": {"Re": "Reynolds number", "f": "Darcy friction factor",
+                 "regime": "'laminar', 'transitional' or 'turbulent'"},
+    "Fin": {"efficiency": "fin efficiency (0..1)"},
+    "Lumped": {"valid": "true when Bi < 0.1 (lumped model applies)"},
+    "Rlc": {"zeta": "damping ratio", "bandwidth": "half-power bandwidth, Hz",
+            "response": "'undamped', 'underdamped', 'critically damped' or 'overdamped'"},
+    "Timer555": {"f": "output frequency, Hz", "t_high": "time high per cycle, s",
+                 "t_low": "time low per cycle, s"},
+    "Material": {"name": "full material name"},
+    "Tensile": {"strain_at_Su": "strain at the ultimate strength"},
+    "Frame": {"length": "member lengths, m"},
+    "Plate": {"Y": "node y coordinates (same grid as X)", "ux": "x displacement at each node, m",
+              "uy": "y displacement at each node, m", "sy": "normal stress in y, Pa",
+              "txy": "shear stress, Pa", "von_mises": "von Mises stress at each node, Pa",
+              "max_von_mises": "largest von Mises stress, Pa",
+              "max_displacement": "largest displacement magnitude, m"},
+    "Airspeed": {"mach": "Mach number"},
+    "Orbit": {"v_circular": "circular orbit speed, m/s", "v_escape": "escape speed, m/s",
+              "period": "orbital period, s", "radius": "orbit radius from the centre, m"},
+    "Hohmann": {"dv1": "first burn (leave the inner orbit), m/s",
+                "dv2": "second burn (circularise), m/s", "dv_total": "dv1 + dv2, m/s"},
 }

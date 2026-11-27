@@ -1,6 +1,20 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - User manual (PDF)
+- `docs/manual/Engineering_Studio_User_Manual.pdf`: install/update, desktop and panels, call
+  tips, language, mathematics, plotting, control, simulation (editor, settings, tutorial,
+  `sim`), lab data files, toolboxes; generated references for all 85 toolbox functions (inputs
+  with meaning/unit/limits/default, outputs, result fields, example), all simulation blocks
+  (parameters, defaults) and every core command (calling forms).
+- Built by `python tools/make_manual.py` from `docs/manual/chapters.html` plus the app's own
+  help data; every chapter example runs through the interpreter during the build; Edge prints
+  the PDF (clickable contents and PDF outline; no page numbers). `tests/app/test_manual.py`
+  checks coverage, links and examples.
+- Help fixes: result-struct field descriptions for all toolbox results (`FIELD_DOCS`), and
+  calling forms corrected where Engineering Studio differs (unique: one output; eig: no
+  generalized form; solve: cell arrays for systems; format: short only).
+
 ## 2026-11-27 - Function help, call tips, details pane
 - Help for every command (`app/help_core.py`: calling forms + summary for all core commands;
   `app/help_toolbox.py`: meaning of every toolbox input + a tested example per function;

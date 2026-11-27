@@ -40,6 +40,4 @@ subplot(2,1,2); bar(1:4, [2 -1 3 1], 0.6); xlabel('Mode')
 sgtitle('Free vibration')
 ```
 
-Try `demo_plot` or `demo_plot 2` in the [Command Window](command-window.md) (stub kernel).
-
 [Back to index](index.md)

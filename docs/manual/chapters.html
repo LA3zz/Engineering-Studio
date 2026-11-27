@@ -1,0 +1,533 @@
+<!-- Engineering Studio user manual: hand-written chapters. tools/make_manual.py fills in the
+     generated references and runs every example marked class m. -->
+
+<h1 id="intro">Introduction</h1>
+<p>Engineering Studio is an offline, MATLAB-style desktop environment for engineering students.
+You write <code>.m</code> scripts in the same language you use in MATLAB, run them with F5, and get
+results, figures, block-diagram simulations and engineering toolboxes without a licence server
+or an internet connection.</p>
+<p>This manual explains every part of the program: the desktop and its panels, the language,
+mathematics, plotting, control systems, the block-diagram simulator, lab data files, and the nine
+engineering toolboxes. The last chapters are complete references: every toolbox function with
+the meaning, unit and limits of each input, every simulation block with its parameters, and
+every built-in command with its calling forms.</p>
+<div class="tip"><b>Tip.</b> Everything in the reference chapters is also available inside the
+program: click a function in the Toolboxes panel, type <code>help name</code> in the Command
+Window, or just start typing a call such as <code>plot(x, </code> and read the tip that appears.</div>
+
+<h2 id="install">Installing, updating and removing</h2>
+<ol>
+<li>Download <code>EngineeringStudio-Setup-&lt;version&gt;.exe</code> from the project's GitHub
+Releases page (Windows 10 or 11, 64-bit).</li>
+<li>Run it. Windows may say <i>"Windows protected your PC"</i> because the installer is not
+code-signed; click <b>More info</b> and then <b>Run anyway</b>.</li>
+<li>No administrator rights are needed. The installer offers a desktop shortcut and an
+<i>Open with &rarr; Engineering Studio</i> entry for <code>.m</code> files (your default program
+for <code>.m</code> files does not change).</li>
+</ol>
+<p><b>Updating:</b> choose <b>Help &rarr; Check for Updates</b>. The program asks GitHub (only when you
+click) whether a newer release exists and offers to open the download page. Running a newer
+installer upgrades the program in place and keeps your settings, layout, themes and scripts.</p>
+<p><b>Removing:</b> use <i>Settings &rarr; Apps &rarr; Installed apps &rarr; Engineering Studio &rarr; Uninstall</i>.
+Your own scripts are never deleted.</p>
+
+<h1 id="desktop">The desktop</h1>
+<p>The main window has the script editor in the centre and dockable panels around it:</p>
+<table>
+<tr><th>Panel</th><th>Default place</th><th>Show/hide</th><th>Purpose</th></tr>
+<tr><td>Current Folder</td><td>left</td><td>Ctrl+Shift+1</td><td>Files of the working folder; open scripts and models.</td></tr>
+<tr><td>Toolboxes</td><td>left (tab)</td><td>Ctrl+Shift+2</td><td>Every command and toolbox function, with help.</td></tr>
+<tr><td>Workspace</td><td>right</td><td>Ctrl+Shift+3</td><td>Your variables: name, class, size, preview.</td></tr>
+<tr><td>Documentation</td><td>right (tab)</td><td>Ctrl+Shift+4</td><td>Short built-in help pages.</td></tr>
+<tr><td>Command Window</td><td>bottom</td><td>Ctrl+Shift+5</td><td>Type commands and see results.</td></tr>
+<tr><td>Diagnostics</td><td>bottom (tab)</td><td>Ctrl+Shift+6</td><td>Errors and warnings with line numbers.</td></tr>
+</table>
+
+<h2 id="menus">Menus and toolbar</h2>
+<table>
+<tr><th>Menu</th><th>Items</th></tr>
+<tr><td>File</td><td>New Script (Ctrl+N), Open... (Ctrl+O), Save (Ctrl+S), Save As... (Ctrl+Shift+S), Close Script (Ctrl+W), Exit (Ctrl+Q)</td></tr>
+<tr><td>View</td><td>Panels (each panel, Show All, Hide All), Reset Layout (Ctrl+Shift+R), Focus Command Window (Ctrl+0), Clear Command Window (Ctrl+Shift+L), Theme (Light, Dark, your custom themes, Toggle Light/Dark Ctrl+Shift+T, Customize...), Full Screen (F11)</td></tr>
+<tr><td>Run</td><td>Run Script (F5), Run Selection or Line (F9), Stop (Shift+F5)</td></tr>
+<tr><td>Simulation</td><td>New Model, Open Model...</td></tr>
+<tr><td>Help</td><td>Check for Updates..., About</td></tr>
+</table>
+<p>The toolbar under the menus has New, Open, Save, Run, Stop, buttons to show the Command Window
+and Workspace, and the light/dark switch.</p>
+
+<h2 id="layout">Arranging panels and themes</h2>
+<ul>
+<li>Drag a panel's title bar to move it, drop it on another panel to make tabs, or drag it out
+to float it as its own window. The layout is saved when you exit.</li>
+<li><b>View &rarr; Reset Layout</b> (Ctrl+Shift+R) restores the default arrangement.</li>
+<li><b>Ctrl+Shift+T</b> switches between the light and dark themes; F11 toggles full screen.</li>
+<li><b>Custom themes:</b> <b>View &rarr; Theme &rarr; Customize...</b>. Pick a base theme, then
+double-click a colour role (or type a hex value such as <code>#1f2933</code>, or press
+<b>Pick...</b>). Changes preview live. A warning appears when text would have less than 4.5:1
+contrast with its background. Type a name and press <b>Save</b>; the theme then appears in
+<b>View &rarr; Theme</b>. <b>Export...</b>/<b>Import...</b> share themes as small JSON files.</li>
+</ul>
+
+<h2 id="command-window">Command Window</h2>
+<p>Type a command at the <code>&gt;&gt;</code> prompt and press Enter.</p>
+<ul>
+<li>A result is shown unless the line ends with a semicolon: <code>x = 5</code> shows
+<code>x = 5</code>, <code>x = 5;</code> shows nothing.</li>
+<li><b>Up/Down</b> recall earlier commands (kept between sessions); <b>Esc</b> clears the line.</li>
+<li>Pasting several lines runs them together as one block.</li>
+<li>Errors appear in red and are also listed in the Diagnostics panel.</li>
+<li><code>help name</code> prints how to call a function and what its inputs mean;
+<code>clc</code> clears the window; Ctrl+Shift+L does the same.</li>
+<li>While you type a function call, a <b>call tip</b> above the input line shows how the function can
+be called, with the input you are typing in <b><u>bold underline</u></b> (see
+<a href="#calltips">Call tips</a>).</li>
+</ul>
+
+<h2 id="editor">Script editor and running scripts</h2>
+<p>Scripts are plain text <code>.m</code> files. The editor has tabs, syntax highlighting (keywords,
+comments including <code>%{ ... %}</code> blocks, strings and numbers) and asks before closing a
+tab with unsaved changes.</p>
+<table>
+<tr><th>Action</th><th>Key</th><th>What happens</th></tr>
+<tr><td>Run Script</td><td>F5</td><td>Saves nothing automatically; runs the whole script in the current tab. File names in the script are also looked up in the script's own folder.</td></tr>
+<tr><td>Run Selection or Line</td><td>F9</td><td>Runs the selected text, or the line with the cursor.</td></tr>
+<tr><td>Stop</td><td>Shift+F5</td><td>Stops a running script, loop, simulation or long calculation.</td></tr>
+</table>
+<p>Output goes to the Command Window, variables to the Workspace, errors (with their line number)
+to Diagnostics, and every figure opens in its own window. A script may end with local functions:</p>
+<pre class="m">r = 0:0.5:2;
+a = circle_area(r)
+
+function A = circle_area(r)
+    A = pi*r.^2;
+end</pre>
+<p>Double-clicking a <code>.m</code> file in Windows Explorer (with <i>Open with &rarr; Engineering
+Studio</i>) opens it in the running program instead of starting a second copy.</p>
+
+<h2 id="calltips">Call tips</h2>
+<p>Call tips appear in both the editor and the Command Window as soon as the cursor is inside the
+parentheses of a known function. They show:</p>
+<ul>
+<li>every way of calling the function, one per line; the input at the cursor is
+<b><u>bold and underlined</u></b>;</li>
+<li>calling forms that cannot take that many inputs in grey;</li>
+<li>for toolbox functions, what the current input means, its unit, allowed range or words, and its
+default value; for other functions, a one-line summary.</li>
+</ul>
+<p>Commas inside <code>[ ]</code>, <code>{ }</code> and quoted text do not count as new inputs. The tip
+disappears when the closing parenthesis is typed, when the cursor leaves the call, or when you
+press Esc.</p>
+
+<h2 id="panels">Workspace, Current Folder, Toolboxes, Diagnostics</h2>
+<p><b>Workspace</b> lists every variable with its class, size and a short preview. Click a column
+header to sort, type in the filter box to narrow the list, press <b>Clear</b> to delete all
+variables, and double-click a row to display the variable in the Command Window.</p>
+<p><b>Current Folder</b> shows the working folder. Use <b>Up</b>, <b>Browse</b>, or type a path and
+press Enter. Double-click a folder to enter it, a <code>.m</code> file to open it in the editor, or a
+<code>.esmodel</code> file to open it in the model editor. The Current Folder <i>is</i> the working
+folder: relative file names such as <code>readmatrix('data.csv')</code> or
+<code>saveas(gcf, 'plot.png')</code> refer to it, and the commands <code>cd</code> and
+<code>pwd</code> change and show it (the panel follows).</p>
+<p><b>Toolboxes</b> lists all commands in groups (Elementary math, Plotting, Control systems, ...)
+and the nine engineering toolboxes. Groups start collapsed; click the arrow to open one. Type in
+<i>Filter functions...</i> to search names and descriptions. Click a function to see its complete
+help in the pane below the list (calling forms, inputs with units and limits, outputs, result
+fields and an example); double-click to insert its name into the Command Window.</p>
+<p><b>Diagnostics</b> collects errors, warnings and information from every run (the newest 500 are
+kept). Filter by severity with the buttons and press <b>Clear</b> to empty the list.</p>
+
+<h1 id="language">The language</h1>
+<p>Engineering Studio runs the MATLAB language. This chapter is a compact tour; everything shown
+works as in MATLAB.</p>
+
+<h2 id="lang-basics">Variables, numbers and display</h2>
+<pre class="m">a = 3            % shows a = 3
+b = 2.5e-3;      % semicolon: no output
+c = 3 + 4i       % complex number
+d = abs(c)       % 5
+7*6              % an unnamed result is stored in ans
+x = pi; y = e;   % constants pi and e</pre>
+<p>Names are case sensitive, start with a letter and may contain letters, digits and underscores.
+Comments start with <code>%</code>; <code>%{</code> and <code>%}</code> on their own lines enclose a block
+comment; <code>...</code> continues a statement on the next line.</p>
+
+<h2 id="lang-matrices">Matrices and indexing</h2>
+<pre class="m">A = [1 2 3; 4 5 6]      % 2-by-3: spaces or commas separate columns, ; separates rows
+v = 0:0.25:1            % start:step:stop
+z = zeros(2, 3); I = eye(3);
+A(2, 3)                 % one element (row 2, column 3)
+A(:, 2)                 % whole second column
+A(end, :)               % last row
+A(A > 2)                % logical indexing: elements greater than 2
+A(1, :) = [7 8 9];      % assign a row
+B = [A; 10 11 12]       % append a row
+n = numel(A); [r, c] = size(A);</pre>
+
+<h2 id="lang-operators">Operators</h2>
+<table>
+<tr><th>Operator</th><th>Meaning</th><th>Operator</th><th>Meaning</th></tr>
+<tr><td><code>+ -</code></td><td>add, subtract</td><td><code>== ~= &lt; &lt;= &gt; &gt;=</code></td><td>comparisons (give 0/1)</td></tr>
+<tr><td><code>*</code></td><td>matrix product</td><td><code>&amp; | ~</code></td><td>element-wise and, or, not</td></tr>
+<tr><td><code>.*</code></td><td>element-wise product</td><td><code>&amp;&amp; ||</code></td><td>short-circuit and, or (scalars)</td></tr>
+<tr><td><code>/ \</code></td><td>right/left matrix division (<code>A\b</code> solves A x = b)</td><td><code>'</code></td><td>transpose (complex conjugate)</td></tr>
+<tr><td><code>./ .\</code></td><td>element-wise division</td><td><code>.'</code></td><td>transpose without conjugate</td></tr>
+<tr><td><code>^</code></td><td>matrix power</td><td><code>:</code></td><td>ranges and "all" in indexing</td></tr>
+<tr><td><code>.^</code></td><td>element-wise power</td><td><code>@</code></td><td>function handles</td></tr>
+</table>
+<div class="tip"><b>Remember:</b> use <code>.*</code>, <code>./</code> and <code>.^</code> when you compute with
+vectors element by element, e.g. <code>y = x.^2 .* exp(-x)</code>.</div>
+
+<h2 id="lang-text">Text, cells and structures</h2>
+<pre class="m">name = 'beam';                       % char array (single quotes)
+msg = sprintf('%s of %.2f m', name, 2.5)
+parts = strsplit('a,b,c', ',');      % cell array of texts
+c = {1, 'two', [3 4]};               % cell array: any values
+second = c{2}                        % curly braces read the content
+s.E = 200e9; s.name = 'steel';       % structure with fields
+s.E / 1e9
+f = fieldnames(s);</pre>
+
+<h2 id="lang-control">Control flow</h2>
+<pre class="m">total = 0;
+for k = 1:5
+    if mod(k, 2) == 0
+        continue            % skip even numbers
+    end
+    total = total + k;
+end
+n = 0;
+while n &lt; 3
+    n = n + 1;
+end
+mode = 'fast';
+switch mode
+    case 'fast'
+        dt = 0.1;
+    case {'slow', 'safe'}
+        dt = 0.01;
+    otherwise
+        dt = 1;
+end
+try
+    x = [1 2] * [3 4];      % size mismatch
+catch err
+    disp(err.message)
+end</pre>
+<p>Also available: <code>break</code>, <code>return</code>, <code>elseif</code>, and <code>error(...)</code> /
+<code>warning(...)</code> to report problems.</p>
+
+<h2 id="lang-functions">Functions and function handles</h2>
+<pre class="m">f = @(x) x.^2 - 2;            % anonymous function
+f(3)
+root = fzero(f, [0 2])
+g = @sin;                     % handle to a named function
+integral(g, 0, pi)
+[m, s] = stats([1 2 3 4])
+
+function [m, s] = stats(x)    % local function with two outputs
+    m = mean(x);
+    s = std(x);
+end</pre>
+<p>Command syntax works for common commands: <code>hold on</code>, <code>grid on</code>,
+<code>axis equal</code>, <code>close all</code>, <code>clear all</code>, <code>colormap jet</code>,
+<code>cd ..</code>, <code>help plot</code>.</p>
+
+<h2 id="lang-differences">Differences from MATLAB</h2>
+<ul>
+<li>About 350 built-in commands plus 85 toolbox functions; commands from MATLAB toolboxes that are
+not listed in the <a href="#command-reference">command reference</a> are not available.</li>
+<li>No classes (<code>classdef</code>), <code>global</code>/<code>persistent</code> variables, struct arrays,
+tables, or N-dimensional arrays (matrices are 2-D). <code>readtable</code> returns a struct of
+columns.</li>
+<li><code>format long</code> is not available yet; <code>unique</code> has one output.</li>
+<li>Symbolic systems of equations use cell arrays: <code>solve({eq1, eq2}, {x, y})</code>.</li>
+<li>Plot windows are interactive (pan/zoom) but property editing is limited to the
+<code>set</code>/<code>get</code> properties used by the plotting commands.</li>
+</ul>
+
+<h1 id="math">Mathematics</h1>
+
+<h2 id="math-linalg">Linear algebra</h2>
+<pre class="m">A = [4 -2 1; -2 4 -2; 1 -2 4];
+b = [11; -16; 17];
+x = A \ b                 % solve A x = b (preferred over inv(A)*b)
+d = det(A), r = rank(A), c = cond(A)
+[V, D] = eig(A);          % eigenvectors (columns of V) and eigenvalues (diagonal of D)
+[L, U, P] = lu(A);  R = chol(A);  [U2, S, V2] = svd(A);</pre>
+
+<h2 id="math-calculus">Calculus, roots and optimisation</h2>
+<pre class="m">f = @(x) exp(-x.^2);
+I = integral(f, -Inf, Inf)            % numerical integral
+x = 0:0.1:1; y = x.^2;
+A = trapz(x, y)                       % area under sampled data
+r = fzero(@(x) cos(x) - x, 0.5)       % root of one equation
+sol = fsolve(@(v) [v(1)^2 + v(2)^2 - 4; v(1) - v(2)], [1; 1])
+[xmin, fmin] = fminsearch(@(v) (v(1) - 1)^2 + (v(2) + 2)^2, [0 0])
+yi = interp1([0 1 2], [0 10 15], 1.5)  % interpolation</pre>
+
+<h2 id="math-ode">Differential equations</h2>
+<p>Write the equation as a first-order system <code>dy/dt = f(t, y)</code>. Example: a damped
+oscillator <code>m x'' + c x' + k x = 0</code> with state <code>y = [x; v]</code>:</p>
+<pre class="m">m = 2; c = 4; k = 800;
+f = @(t, y) [y(2); -(c*y(2) + k*y(1))/m];
+opts = odeset('RelTol', 1e-8);
+[t, y] = ode45(f, [0 2], [0.01; 0], opts);
+plot(t, y(:, 1)); grid on; xlabel('t (s)'); ylabel('x (m)')</pre>
+<p>Use <code>ode23</code> for rough problems and <code>ode15s</code> for stiff ones.</p>
+
+<h2 id="math-stats">Statistics, data and polynomials</h2>
+<pre class="m">data = [9.8 10.1 9.9 10.3 9.7 10.0];
+mu = mean(data), s = std(data), med = median(data)
+[h, p] = ttest(data, 10)          % is the mean different from 10?
+p2 = polyfit(1:6, data, 1);       % straight-line fit
+fitted = polyval(p2, 1:6);
+r = roots([1 -3 2])               % roots of x^2 - 3x + 2
+X = fft(sin(2*pi*5*(0:0.01:0.99)));</pre>
+
+<h2 id="math-symbolic">Symbolic mathematics</h2>
+<pre class="m">syms x t s
+f = x^3 - 2*x;
+df = diff(f, x)                   % derivative
+F = int(f, x)                     % indefinite integral
+area = int(f, x, 0, 2)            % definite integral
+xs = solve(x^2 - 4 == 0, x)       % equation
+S = solve({x + t == 3, x - t == 1}, {x, t});
+G = laplace(exp(-2*t), t, s)      % Laplace transform
+g = ilaplace(1/(s + 1))
+h = matlabFunction(df);           % numeric function from an expression
+h(2)</pre>
+
+<h1 id="plotting">Plotting</h1>
+<p>Every figure opens in its own window and updates in place when the same figure is drawn
+again. Pan with the left mouse button and zoom with the wheel. Save a figure from its window with
+Ctrl+S (PNG, SVG or PDF) or from a script with <code>saveas</code>, <code>print</code> or
+<code>exportgraphics</code>.</p>
+
+<h2 id="plot-2d">2-D plots</h2>
+<pre class="m">t = linspace(0, 2*pi, 200);
+figure;
+plot(t, sin(t), 'b-', 'LineWidth', 2, 'DisplayName', 'sin');
+hold on
+plot(t, cos(t), 'r--', 'DisplayName', 'cos');
+hold off
+grid on; xlabel('\theta (rad)'); ylabel('value'); title('Sine and cosine')
+legend; xlim([0 2*pi])</pre>
+<table>
+<tr><th>Style part</th><th>Codes</th></tr>
+<tr><td>Colour</td><td><code>r</code> red, <code>g</code> green, <code>b</code> blue, <code>k</code> black, <code>m</code> magenta, <code>c</code> cyan, <code>y</code> yellow</td></tr>
+<tr><td>Line</td><td><code>-</code> solid, <code>--</code> dashed, <code>:</code> dotted, <code>-.</code> dash-dot</td></tr>
+<tr><td>Marker</td><td><code>o</code> circle, <code>x</code> cross, <code>+</code> plus, <code>*</code> star, <code>s</code> square, <code>d</code> diamond</td></tr>
+<tr><td>Name-value</td><td><code>'LineWidth', 2</code>, <code>'DisplayName', 'text'</code>, <code>'MarkerSize', 8</code></td></tr>
+</table>
+<p>Other 2-D types: <code>bar</code>, <code>stem</code>, <code>stairs</code>, <code>area</code>,
+<code>scatter</code>, <code>semilogx</code>, <code>semilogy</code>, <code>loglog</code>,
+<code>histogram</code>, <code>errorbar</code>, <code>polarplot</code>, reference lines
+<code>xline</code>/<code>yline</code>, and <code>text(x, y, 'note')</code>.</p>
+
+<h2 id="plot-layout">Several plots, labels and TeX</h2>
+<pre class="m">x = linspace(0, 1, 50);
+figure;
+subplot(2, 1, 1); plot(x, x.^2); grid on; ylabel('x^2')
+subplot(2, 1, 2); bar(1:4, [2 -1 3 1]); xlabel('mode')
+sgtitle('Two plots, one figure')</pre>
+<p>Labels understand MATLAB's TeX subset: <code>\theta_1</code>, <code>m/s^2</code>,
+<code>x^{10}</code>, <code>\omega_n</code>, <code>90\circ</code>. Spans work as in MATLAB:
+<code>subplot(2, 2, [1 2])</code>.</p>
+
+<h2 id="plot-3d">3-D, surfaces and contours</h2>
+<pre class="m">[X, Y] = meshgrid(-2:0.1:2);
+Z = X .* exp(-X.^2 - Y.^2);
+figure; surf(X, Y, Z); shading interp; colorbar; view(30, 35)
+xlabel('x'); ylabel('y'); zlabel('z')
+figure; contourf(X, Y, Z, 20); colorbar; axis equal</pre>
+<p>These figures use a canvas with its own toolbar (pan, zoom, rotate, save). Also available:
+<code>plot3</code>, <code>scatter3</code>, <code>mesh</code>, <code>contour</code>,
+<code>colormap</code>, <code>zlim</code>.</p>
+
+<h2 id="plot-animation">Animation and export</h2>
+<pre class="m">figure;
+for k = 1:20
+    x = linspace(0, 2*pi, 100);
+    plot(x, sin(x - k/5)); ylim([-1 1]); grid on
+    drawnow                % shows each frame (about 30 frames per second)
+end
+saveas(gcf, 'last_frame.png');</pre>
+<p><code>drawnow limitrate</code> skips frames for speed, <code>pause(t)</code> waits, and
+<code>h = animatedline; addpoints(h, x, y)</code> grows a line point by point.
+<code>exportgraphics(gcf, 'anim.gif', 'Append', true)</code> adds one frame to an animated GIF each
+time it is called. <code>print('-dpdf', '-r300', 'name')</code> controls format and resolution.</p>
+
+<h1 id="control">Control systems</h1>
+<p>Linear systems are values, like numbers: create them, combine them with operators, and pass them
+to analysis and plot commands.</p>
+<pre class="m">s = tf('s');
+G = 1/(s*(s + 1)*(s + 5));         % plant
+C = pidtune(G, 'PID');             % controller for about 60 degrees phase margin
+T = feedback(C*G, 1);              % closed loop with unity feedback
+info = stepinfo(T)                 % rise time, overshoot, settling time, ...
+figure; step(T); grid on
+figure; margin(C*G)                % Bode plot with margins
+p = pole(T);</pre>
+<ul>
+<li><b>Create:</b> <code>tf(num, den)</code>, <code>tf('s')</code>, <code>zpk(z, p, k)</code>,
+<code>ss(A, B, C, D)</code>; discrete with <code>tf(num, den, Ts)</code> or <code>c2d(G, Ts)</code>.</li>
+<li><b>Combine:</b> <code>G1*G2</code> (series), <code>G1 + G2</code> (parallel), <code>feedback(G, H)</code>
+(negative feedback), <code>minreal</code>.</li>
+<li><b>Analyse:</b> <code>pole</code>, <code>zero</code>, <code>dcgain</code>, <code>damp</code>,
+<code>isstable</code>, <code>stepinfo</code>, <code>margin</code>.</li>
+<li><b>Plot:</b> <code>step</code>, <code>impulse</code>, <code>initial</code>, <code>lsim</code>,
+<code>bode</code>, <code>nyquist</code>, <code>rlocus</code>, <code>pzmap</code>; several systems can be
+drawn together: <code>step(G, 'b', T, 'r--')</code>. With outputs they return data:
+<code>[y, t] = step(G)</code>.</li>
+<li><b>PID:</b> <code>pid(Kp, Ki, Kd, Tf)</code>, <code>pidstd(Kp, Ti, Td)</code>,
+<code>pidtune(G, 'PI')</code> or <code>pidtune(G, 'PID', wc)</code> for a chosen crossover
+frequency.</li>
+</ul>
+
+<h1 id="simulation">Simulation (block diagrams)</h1>
+<p>The model editor builds Simulink-style block diagrams: drag blocks from a library, wire them,
+set parameters, press Run and look at the Scope windows. Models are saved as
+<code>.esmodel</code> files and can also be run from scripts with <code>sim</code>.</p>
+
+<h2 id="sim-open">Opening the model editor</h2>
+<ul>
+<li><b>Simulation &rarr; New Model</b> or <b>Simulation &rarr; Open Model...</b> in the main window;</li>
+<li>double-click an <code>.esmodel</code> file in the Current Folder panel;</li>
+<li>from a script: <code>open_system('model.esmodel')</code>.</li>
+</ul>
+
+<h2 id="sim-editing">Building a model</h2>
+<table>
+<tr><th>Task</th><th>How</th></tr>
+<tr><td>Add a block</td><td>Drag it from the Library (left) onto the canvas, or double-click it in the Library. Hover over a library entry to read what it does.</td></tr>
+<tr><td>Connect blocks</td><td>Drag from an <b>output port</b> (filled circle, right side of a block) to an <b>input port</b> (open circle, left side). A new wire into an input replaces the old one. One output may feed several inputs (branching).</td></tr>
+<tr><td>Set parameters</td><td>Double-click a block. Numbers as <code>2.5</code>, vectors as <code>[1 2 1]</code>, matrices as <code>[0 1; -4 -0.4]</code>; <code>inf</code> and <code>-inf</code> are allowed. Hover over a field for a description where one is available.</td></tr>
+<tr><td>Move, select, delete</td><td>Drag blocks; drag a rectangle to select several; Delete removes the selection.</td></tr>
+<tr><td>Undo / redo</td><td>Ctrl+Z / Ctrl+Y</td></tr>
+<tr><td>Subsystems</td><td>Add a Subsystem block and double-click it to edit its contents in a child editor; use Inport/Outport blocks inside for its connections.</td></tr>
+<tr><td>Save / open / new</td><td>Ctrl+S, Ctrl+Shift+S, Ctrl+O, Ctrl+N</td></tr>
+</table>
+
+<h2 id="sim-run">Running and settings</h2>
+<p><b>Run</b> (Ctrl+R) starts the simulation in the background (a progress bar shows in the status
+bar); <b>Stop</b> ends it. When it finishes, every Scope opens a figure window with its signals
+against time, and the status bar shows the number of points and the final values of Display
+blocks. If a run fails, the message names the block, and that block is selected.</p>
+<p><b>Settings</b> (Ctrl+E):</p>
+<table>
+<tr><th>Setting</th><th>Meaning</th></tr>
+<tr><td>Start time, Stop time</td><td>Simulated time interval in seconds.</td></tr>
+<tr><td>Solver</td><td><code>ode45</code> (default, general), <code>ode23</code> (rough problems), <code>ode15s</code> (stiff), <code>ode113</code>, or fixed-step <code>rk4</code> and <code>euler</code>.</td></tr>
+<tr><td>Relative / absolute tolerance</td><td>Accuracy of variable-step solvers (smaller is more accurate and slower).</td></tr>
+<tr><td>Max step</td><td>Largest allowed step (use it so short pulses are not skipped).</td></tr>
+<tr><td>Fixed step</td><td>Step size for <code>rk4</code> and <code>euler</code>.</td></tr>
+</table>
+<div class="tip"><b>Algebraic loops.</b> Every feedback loop must contain a block with memory or
+dynamics (Integrator, Transfer Fcn with more poles than zeros, State-Space, Unit Delay, ...).
+Otherwise the run stops with an "algebraic loop" message listing the blocks in the loop.</div>
+
+<h2 id="sim-tutorial">Tutorial: mass-spring-damper</h2>
+<p>Model <code>m x'' + c x' + k x = F(t)</code> with m = 1 kg, c = 0.4 N s/m, k = 4 N/m and a 1 N step
+force:</p>
+<ol>
+<li>New Model. Add a <b>Step</b> (StepTime 0, Final 1), a <b>Sum</b> with Signs <code>+--</code>, a
+<b>Gain</b> with K = 1 (that is 1/m), two <b>Integrator</b> blocks, two <b>Gain</b> blocks with
+K = 0.4 (c) and K = 4 (k), and a <b>Scope</b>.</li>
+<li>Wire Step &rarr; Sum input 1, Sum &rarr; Gain(1/m) &rarr; Integrator 1 (output is velocity)
+&rarr; Integrator 2 (output is position) &rarr; Scope.</li>
+<li>Feed velocity through Gain c into Sum input 2, and position through Gain k into Sum input 3.</li>
+<li>Settings: Stop time 20. Press Run: the Scope shows the position settling at F/k = 0.25 m.</li>
+</ol>
+<p>A finished version of this model ships as <code>examples/models/mass_spring_damper.esmodel</code>; <code>pid_position_loop.esmodel</code> and <code>sampled_control.esmodel</code> show feedback control with a PID block and with discrete blocks.</p>
+
+<h2 id="sim-scripts">Running models from scripts</h2>
+<pre>out = sim('mass_spring_damper.esmodel');     % run; results in a struct
+plot(out.tout, out.x); grid on                % To Workspace block named x
+sim('pid_position_loop', 'StopTime', 5)       % no output: Scope figures open, out is set
+out = sim('model', 'Solver', 'rk4', 'FixedStep', 1e-3);</pre>
+<p><code>out.tout</code> is the time column; each <b>To Workspace</b> block adds a field named after its
+VariableName (one column per signal element), and top-level Outports are collected in
+<code>out.yout</code>. Options: <code>'StartTime'</code>, <code>'StopTime'</code>, <code>'Solver'</code>,
+<code>'RelTol'</code>, <code>'AbsTol'</code>, <code>'MaxStep'</code>, <code>'FixedStep'</code>. Model files are
+looked up in the working folder and next to the running script. Stop (Shift+F5) also stops a
+<code>sim</code> call.</p>
+<p>All blocks and their parameters are listed in the <a href="#block-reference">block reference</a>.</p>
+
+<h1 id="lab-data">Lab data files</h1>
+<p>Read measurements from CSV, TXT, DAT, TSV or Excel (<code>.xlsx</code>) files, analyse them and
+write results back. A file name without a folder is looked up in the working folder, then next to
+the running script, so a script and its data can live together.</p>
+<table>
+<tr><th>Command</th><th>Result</th></tr>
+<tr><td><code>A = readmatrix(file)</code></td><td>The numbers as a matrix. Header lines at the top are skipped; other text cells become NaN. Options <code>'Sheet'</code> (name or number) and <code>'Delimiter'</code>.</td></tr>
+<tr><td><code>T = readtable(file)</code></td><td>A struct with one field per column, named after the header (<code>Load (kN)</code> becomes <code>T.Load__kN_</code>; see <code>fieldnames(T)</code>). Numbers become column vectors, text becomes cell columns.</td></tr>
+<tr><td><code>writematrix(A, file)</code></td><td>Writes a matrix to CSV/TXT or XLSX (<code>'Sheet', name</code> for Excel).</td></tr>
+<tr><td><code>writetable(T, file)</code></td><td>Writes a struct of equal-length columns with a header row.</td></tr>
+<tr><td><code>csvread</code>, <code>csvwrite</code>, <code>xlsread</code>, <code>xlswrite</code></td><td>Older names, for existing scripts.</td></tr>
+<tr><td><code>cd</code>, <code>pwd</code></td><td>Change and show the working folder.</td></tr>
+</table>
+<pre class="m">T.time = (0:4)';
+T.load = [0; 1.2; 2.5; 3.6; 5.1];
+writetable(T, 'manual_demo.csv');
+back = readtable('manual_demo.csv');
+M = readmatrix('manual_demo.csv')     % header row skipped
+p = polyfit(back.time, back.load, 1)  % stiffness from a straight-line fit</pre>
+<p>The worked example <code>examples/lab_data_example.m</code> reads a tensile test
+(<code>examples/data/tensile_test.csv</code>), finds E, the 0.2 % yield strength and the ultimate
+strength with <code>tensile_test</code>, plots the curve and saves a summary table.</p>
+
+<h1 id="toolboxes">Engineering toolboxes</h1>
+<p>Nine toolboxes add 85 engineering functions. They are called like any other function; results
+with several values come back as a struct (read fields with a dot, e.g. <code>p.wn</code>), several
+outputs as <code>[a, b] = f(...)</code>. All values are in SI units unless the description says
+otherwise. Pass <code>[]</code> for an optional input you want to skip.</p>
+<pre class="m">p = sdof(2, 4, 800);                 % mass, damping, stiffness
+fprintf('wn = %.2f rad/s, zeta = %.3f (%s)\n', p.wn, p.zeta, p.regime);
+R = conduction_resistance('cylinder', 15, 0.01, 0.02, 2)
+t = truss2d([0 0; 2 0; 1 1], [1 3; 2 3], 200e9, 1e-3, [1 1 1; 2 1 1], [3 0 -10e3]);
+member_forces = t.N</pre>
+<table>
+<tr><th>Toolbox</th><th>Covers</th></tr>
+<tr><td>Mechanical Engineering</td><td>cross-sections, stresses, Mohr's circle, von Mises, buckling, beams, vibrations (SDOF free and forced, transmissibility, damping from decay, MDOF modes), springs, gears, shafts, four-bar linkages</td></tr>
+<tr><td>Thermodynamics</td><td>ideal gas, processes and first law, cycle efficiencies, COP, entropy</td></tr>
+<tr><td>Fluid Mechanics</td><td>Reynolds number, friction factor, pipe losses, Bernoulli, hydrostatics, pumps, drag, orifices, open channels</td></tr>
+<tr><td>Heat Transfer</td><td>thermal resistances, radiation, Nusselt correlations, fins, heat exchangers (LMTD, effectiveness-NTU), lumped cooling</td></tr>
+<tr><td>Electrical and Electronics</td><td>resistor networks, dividers, RLC, RC/RL transients, impedance, AC and three-phase power, op-amps, filters, diodes, 555 timer</td></tr>
+<tr><td>Materials and Lab Data</td><td>property database, tensile-test analysis, thermal stress, fatigue, composites</td></tr>
+<tr><td>Structures and FEA</td><td>2-D trusses, frames with distributed loads, plane-stress plates with stress contour plots</td></tr>
+<tr><td>Robotics</td><td>rotations, homogeneous transforms, Denavit-Hartenberg kinematics, planar arms and Jacobians, inverse kinematics, trajectories</td></tr>
+<tr><td>Aerospace</td><td>standard atmosphere, airspeed and Mach, lift and drag, stall speed, Breguet range, rocket equation, orbits, Hohmann transfers</td></tr>
+</table>
+<p>The worked examples in the <code>examples</code> folder use every toolbox:
+<code>mechanical_example.m</code>, <code>thermo_fluids_example.m</code>, <code>electrical_example.m</code>,
+<code>fea_example.m</code>, <code>lab_data_example.m</code> and <code>robotics_aero_example.m</code>. The
+complete function reference follows.</p>
+
+<h1 id="toolbox-reference">Toolbox function reference</h1>
+<p>For each function: the ways to call it, what it computes, every input (meaning, unit, limits,
+default), the outputs, the fields of a result struct, and an example that you can paste into the
+Command Window.</p>
+<!--REF:TOOLBOXES-->
+
+<h1 id="block-reference">Simulation block reference</h1>
+<p>Every block of the model editor library, grouped as in the library, with its parameters and
+default values.</p>
+<!--REF:BLOCKS-->
+
+<h1 id="command-reference">Command reference</h1>
+<p>Every built-in command, grouped as in the Toolboxes panel, with its calling forms (separated
+by "|"). Inputs in <code>[ ]</code> of a form are examples of values.</p>
+<!--REF:COMMANDS-->
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+<table>
+<tr><th>Problem</th><th>What to do</th></tr>
+<tr><td>"Undefined function or variable"</td><td>Check the spelling (names are case sensitive), that the variable was created earlier, or that the command exists (search the Toolboxes panel).</td></tr>
+<tr><td>"Matrix dimensions must agree" or a size error</td><td>Use element-wise operators <code>.*</code>, <code>./</code>, <code>.^</code> for vectors; check sizes with <code>size(x)</code>.</td></tr>
+<tr><td>A script runs forever</td><td>Press Stop (Shift+F5).</td></tr>
+<tr><td>A data file is not found</td><td>Put it in the Current Folder or next to the script, or use <code>cd</code> to go to its folder.</td></tr>
+<tr><td>Simulation reports an algebraic loop</td><td>Add a dynamic block (Integrator, Transfer Fcn, Unit Delay) into the loop.</td></tr>
+<tr><td>A simulation is slow or misses short pulses</td><td>Set Max step in the model settings, or use a fixed-step solver.</td></tr>
+<tr><td>The program does not start after an update</td><td>Look at <code>%LOCALAPPDATA%\EngineeringStudio\startup_error.txt</code> and reinstall the latest version.</td></tr>
+<tr><td>Panels disappeared</td><td>View &rarr; Reset Layout (Ctrl+Shift+R).</td></tr>
+</table>

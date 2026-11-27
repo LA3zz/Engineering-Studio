@@ -11,7 +11,7 @@ in [Diagnostics](diagnostics.md).
 - `cd folder`, `cd ..` and `pwd` change and show the working folder (the
   [Current Folder](current-folder.md) panel follows).
 - Command syntax works for common commands: `hold on`, `grid on`, `axis equal`,
-  `close all`, `clear all`, `format long`.
+  `close all`, `clear all`.
 
 While you type a call such as `plot(x, `, a tip above the input line shows what comes next
 (see [Script editor](script-editor.md)).

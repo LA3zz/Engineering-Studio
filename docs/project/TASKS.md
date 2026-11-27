@@ -153,6 +153,10 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   152/152 incl. Excel and FEA), installer EngineeringStudio-Setup-0.8.0.exe (116 MB) copied to
   Downloads\Apps; [ ] publish the 0.8.0 release with the user;
   [ ] clean-PC test T2.7b (needs a second PC or a VM)
+- [x] (2026-11-27) Function help for every command: Toolbox details pane, `help name`, call tips
+  while typing (editor and Command Window)
+- [x] (2026-11-27) User manual PDF, `tools/make_manual.py` (references generated from the help data;
+  examples checked during the build; tests/app/test_manual.py)
 - Backlog: compile anonymous functions for ODE speed; sum/mean/... 'all' option; struct arrays.
 
 ## Phase 5 plotting (done 2026-11-27)

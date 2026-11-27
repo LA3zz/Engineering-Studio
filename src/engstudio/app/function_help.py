@@ -13,7 +13,7 @@ import typing
 from dataclasses import dataclass
 
 from engstudio.app.help_core import CORE_HELP
-from engstudio.app.help_toolbox import ARG_DOCS, EXAMPLES
+from engstudio.app.help_toolbox import ARG_DOCS, EXAMPLES, FIELD_DOCS
 
 __all__ = ["FunctionHelp", "core_help", "toolbox_help", "split_forms"]
 
@@ -115,7 +115,9 @@ def _field_docs(cls: type) -> list[tuple[str, str]]:
         src = ""
     for m in re.finditer(r"^\s+(\w+):[^#\n]*#\s*(.+)$", src, re.MULTILINE):
         comments[m.group(1)] = m.group(2).strip()
-    return [(f.name, comments.get(f.name, "")) for f in dataclasses.fields(cls)]
+    extra = FIELD_DOCS.get(cls.__name__, {})
+    return [(f.name, extra.get(f.name) or comments.get(f.name, ""))
+            for f in dataclasses.fields(cls)]
 
 
 def _result_class(func) -> type | None:
