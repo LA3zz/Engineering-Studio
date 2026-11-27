@@ -119,11 +119,26 @@ dataclasses per ARCHITECTURE section 6, every result checked against analytic va
   - [x] (2026-11-27) S15 block parameter dialogs
   - [x] (2026-11-27) S16 Run/Stop toolbar, scope windows, simulation settings
   - [x] (2026-11-27) S17 open/save .esmodel, example models (mass-spring-damper, PID loop), docs page
-- [~] Phase 8 engineering toolboxes (one at a time)
+- [x] Phase 8 engineering toolboxes (done 2026-11-27; 9 toolboxes, 85 functions)
   - [x] (2026-11-27) Mechanical Engineering: sections, stress, Mohr, von Mises, buckling, beams,
     vibrations (sdof, sdof_free, sdof_forced, transmissibility, log_decrement, modes), springs,
-    gears, shafts, four-bar; app/toolbox_bindings.py binds toolboxes into the interpreter
-  - [ ] Next toolboxes: thermodynamics, fluids, heat transfer, electrical, materials, structural/FEA (2D)
+    gears, shafts, four-bar (+ joint coordinates for plotting/animation);
+    app/toolbox_bindings.py binds toolboxes into the interpreter
+  - [x] (2026-11-27) Thermodynamics (ideal gas, processes, cycles, COP, entropy), Fluids (Re,
+    friction factor, pipe loss, Bernoulli, pumps, drag, orifice, Manning), Heat transfer
+    (resistances, radiation, Nusselt, fins, LMTD, e-NTU, lumped)
+  - [x] (2026-11-27) Electrical and electronics (networks, RLC, transients, impedance, AC and
+    three-phase power, op-amps, RC filters, diode, 555)
+  - [x] (2026-11-27) Materials (property database, tensile-test analysis, thermal stress,
+    fatigue, composites) + lab data files: readmatrix, readtable, writematrix, writetable,
+    csvread/csvwrite, xlsread/xlswrite (`app/file_bindings.py`, pandas/openpyxl)
+  - [x] (2026-11-27) Structures/FEA 2-D: truss2d, frame2d (member UDL), plate2d (plane stress Q4,
+    central hole, node grids for contourf)
+  - [x] (2026-11-27) Robotics (rotations, DH, fkine, planar arm + Jacobian, 2-link IK,
+    trajectories), Aerospace (ISA, airspeed, lift/drag, stall, Breguet, rocket, orbits, Hohmann)
+  - [x] Docs pages for every toolbox, 5 new examples (+ examples/data/tensile_test.csv),
+    feature script +16 checks, tests/toolboxes/test_examples_run.py runs every example
+  - Backlog: 3-D FEA, mesh import, modal FEA, steam tables, compressible flow, Bode for circuits
 - [ ] Phase 9 integration and quality assurance
 - [~] Phase 10 packaging: [x] P10a desktop shortcut, Open with for .m, single instance (2026-11-27);
   [~] P10b (2026-11-27): GUI in the PyInstaller spec (EngineeringStudio.exe windowed +

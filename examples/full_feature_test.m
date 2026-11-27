@@ -345,6 +345,31 @@ mc = mohr(80e6, -40e6, 25e6);
 [np, nf] = check(np, nf, 'mohr', abs(mc.s1 - 85e6) < 1 && abs(mc.tau_max - 65e6) < 1);
 fb = fourbar(2, 7, 9, 6, 30);
 [np, nf] = check(np, nf, 'fourbar', abs(fb.theta4 - 117.29) < 0.01 && strcmp(fb.grashof, 'crank-rocker'));
+[np, nf] = check(np, nf, 'fourbar joints', abs(hypot(fb.x(3) - fb.x(2), fb.y(3) - fb.y(2)) - 7) < 1e-9);
+
+%% Engineering toolboxes (Phase 8)
+cy = cycle_efficiency('carnot', 800, 300);
+[np, nf] = check(np, nf, 'carnot', abs(cy.efficiency - 0.625) < 1e-12);
+[np, nf] = check(np, nf, 'ideal gas', abs(ideal_gas([], 1, 1, 300) - 287*300) < 1e-6);
+[np, nf] = check(np, nf, 'laminar friction', abs(friction_factor(1000) - 0.064) < 1e-12);
+[np, nf] = check(np, nf, 'lmtd', abs(lmtd(150, 100, 30, 80) - 70) < 1e-9);
+[np, nf] = check(np, nf, 'parallel R', abs(resistors([100 100], 'parallel') - 50) < 1e-12);
+ap = ac_power(230, 30 + 40i);
+[np, nf] = check(np, nf, 'ac power pf', abs(ap.pf - 0.6) < 1e-12);
+[np, nf] = check(np, nf, 'material', material('steel').E == 200e9);
+tr = truss2d([0 0; 2 0; 1 1], [1 3; 2 3], 200e9, 1e-3, [1 1 1; 2 1 1], [3 0 -1e4]);
+[np, nf] = check(np, nf, 'truss2d', max(abs(tr.N + 1e4/sqrt(2))) < 1e-6);
+fr = frame2d([0 0; 2 0], [1 2], 200e9, 1e-3, 8e-6, [1 1 1 1], [2 0 -1e3 0]);
+[np, nf] = check(np, nf, 'frame2d cantilever', abs(fr.u(2,2) + 1e3*8/(3*200e9*8e-6)) < 1e-12);
+pl = plate2d(0.2, 0.1, 0.01, 200e9, 0.3, 8, 4, 'left-roller', 'right', [50e6 0]);
+[np, nf] = check(np, nf, 'plate2d uniform', max(abs(pl.sx(:) - 50e6)) < 1);
+[q1, q2] = ik_2link(1, 0.8, 1.2, 0.6);
+[ax, ay] = planar_arm([1 0.8], [q1 q2]);
+[np, nf] = check(np, nf, 'ik_2link', abs(ax(end) - 1.2) < 1e-12 && abs(ay(end) - 0.6) < 1e-12);
+[Tisa, aisa, pisa, rhoisa] = atmosisa(0);
+[np, nf] = check(np, nf, 'atmosisa', abs(rhoisa - 1.225) < 1e-3 && abs(Tisa - 288.15) < 1e-9);
+writematrix([1 2; 3 4], 'ff_test.csv');
+[np, nf] = check(np, nf, 'writematrix/readmatrix', isequal(readmatrix('ff_test.csv'), [1 2; 3 4]));
 
 %% Summary
 elapsed = toc;

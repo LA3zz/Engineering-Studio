@@ -41,7 +41,8 @@ subplot(2,1,2); plot(r.x, r.deflection*1000); ylabel('y (mm)'); xlabel('x (m)');
 - `spring_helical(d, D, n, G, F)`: rate `k`, index `C`, Wahl factor `Kw`, shear stress `tau`.
 - `gear_pair(N1, N2, module, w1, T1)`, `shaft_power(T, rpm)`, `shaft_diameter(T, tau_allow)`.
 - `fourbar(a, b, c, d, theta2, omega2, 'open' | 'crossed')`: coupler and output angles and
-  angular velocities, and the Grashof type.
+  angular velocities, the Grashof type and joint coordinates `x`, `y` (`[O2 A B O4]`), so
+  `plot(r.x, r.y, '-o')` draws the linkage; loop over `theta2` with `drawnow` to animate it.
 
 See `examples/mechanical_example.m`.
 

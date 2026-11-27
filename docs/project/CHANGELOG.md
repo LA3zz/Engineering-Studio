@@ -1,6 +1,21 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Phase 8 complete: engineering toolboxes
+- New toolboxes (each `toolboxes/<name>` with toolbox.toml, validated `@tb_function`s, tests):
+  thermo, fluids, heat, electrical, materials, structures (2-D FEA: truss2d, frame2d,
+  plate2d), robotics, aero. Nine toolboxes, 85 functions, all in the Toolbox browser.
+- Lab data files: readmatrix, readtable (struct of columns), writematrix, writetable,
+  csvread/csvwrite, xlsread/xlswrite for CSV/TXT/DAT/TSV/XLSX (`app/file_bindings.py`); relative
+  names are also looked up next to the running script.
+- `fourbar` returns joint coordinates `x`, `y` for plotting and animation.
+- Toolbox arguments accept `[]` for "not given".
+- Docs pages: thermo-fluids, electrical, materials-lab-data, structures-fea,
+  robotics-aerospace. Examples: thermo_fluids, electrical, fea, lab_data (+ data/tensile_test.csv),
+  robotics_aero; full_feature_test.m has 16 more checks.
+- Tests: every example script runs clean in `tests/toolboxes/test_examples_run.py`; no toolbox
+  function may be hidden by a core builtin (`test_toolbox_kernel.py`).
+
 ## 2026-11-27 - Phase 7 complete: block-diagram simulation (version 0.7.0)
 - Model editor `gui/sim_editor.py` (Simulation > New/Open Model, Current Folder, open_system):
   library tree, drag and drop, wiring by dragging ports, parameter and settings dialogs, block

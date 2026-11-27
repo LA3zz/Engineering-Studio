@@ -56,3 +56,11 @@ for i = 1:numel(th2)
 end
 figure(5); plot(th2, th4); grid on; xlabel('\theta_2 (deg)'); ylabel('\theta_4 (deg)')
 title(sprintf('Four-bar output angle (%s)', q.grashof))
+
+%% 6. Animate the four-bar linkage (joint coordinates r.x, r.y = [O2 A B O4])
+figure(6);
+for a2 = 0:10:360
+    q = fourbar(2, 7, 9, 6, a2);
+    plot(q.x, q.y, '-o', 'LineWidth', 2); axis equal; axis([-3 11 -3 9]); grid on
+    title(sprintf('\\theta_2 = %d deg', a2)); drawnow
+end
