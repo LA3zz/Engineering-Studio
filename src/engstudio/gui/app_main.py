@@ -25,8 +25,8 @@ def _files(args: list[str]) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     from PySide6.QtCore import Qt, QTimer
-    from PySide6.QtGui import QIcon, QPixmap
-    from PySide6.QtWidgets import QApplication, QSplashScreen
+    from PySide6.QtGui import QIcon
+    from PySide6.QtWidgets import QApplication
 
     from engstudio.gui.single_instance import SingleInstance
 
@@ -48,12 +48,11 @@ def main(argv: list[str] | None = None) -> int:
     icon = QIcon(str(ICON_PATH)) if ICON_PATH.exists() else QIcon()
     app.setWindowIcon(icon)
     splash = None
-    if not smoke and ICON_PATH.exists():
-        splash = QSplashScreen(QPixmap(str(ICON_PATH)).scaled(
-            256, 256, Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation))
-        splash.showMessage("Loading Engineering Studio...",
-                           Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter)
+    if not smoke:
+        from engstudio.gui.splash import make_splash, show_status
+
+        splash = make_splash()
+        show_status(splash, "Loading the numerical libraries...")
         splash.show()
         app.processEvents()
 
@@ -62,7 +61,13 @@ def main(argv: list[str] | None = None) -> int:
     from engstudio.gui.main_window import APP_NAME, MainWindow
 
     app.setApplicationName(APP_NAME)
+    if splash is not None:
+        show_status(splash, "Starting the interpreter and toolboxes...")
+        app.processEvents()
     client = StubKernelClient() if use_stub else InProcessKernelClient()
+    if splash is not None:
+        show_status(splash, "Opening the window...")
+        app.processEvents()
     window = MainWindow(
         UiSettings(None if smoke else default_settings_path()), client
     )
