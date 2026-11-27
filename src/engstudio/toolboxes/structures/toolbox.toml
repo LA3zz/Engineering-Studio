@@ -1,0 +1,6 @@
+[toolbox]
+name = "structures"
+display_name = "Structures and FEA"
+version = "0.1.0"
+api_version = 1
+category = "structural"

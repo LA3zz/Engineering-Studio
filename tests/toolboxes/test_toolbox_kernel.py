@@ -44,3 +44,14 @@ def test_toolbox_functions_run_from_scripts(kernel):
     assert ws["R"].item() == pytest.approx(0.1)
     assert ws["Req"].item() == pytest.approx(50) and ws["g"].item() == 1
     assert ws["p"].item() == pytest.approx(287 * 300)
+
+
+def test_fea_results_plot_from_scripts(kernel):
+    ws = run(kernel, "r = plate2d(0.4, 0.2, 0.005, 200e9, 0.3, 20, 10, 'left-roller', 'right',"
+                     " [10e6 0], 0.03); figure; contourf(r.X, r.Y, r.von_mises, 20); colorbar;"
+                     " t = truss2d([0 0; 2 0; 1 1], [1 3; 2 3], 200e9, 1e-3,"
+                     " [1 1 1; 2 1 1], [3 0 -1e4]); N = t.N;"
+                     " f = frame2d([0 0; 2 0], [1 2], 200e9, 1e-3, 8e-6, [1 1 1 1], [2 0 -1e3 0]);"
+                     " d = f.u(2, 2);")
+    assert ws["N"].shape == (1, 2) and ws["r"].get("X").shape == (11, 21)
+    assert ws["d"].item() == pytest.approx(-1e3 * 8 / (3 * 200e9 * 8e-6))
