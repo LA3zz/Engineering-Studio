@@ -1,6 +1,16 @@
 # CHANGELOG
 Format: Keep a Changelog style. Newest first.
 
+## 2026-11-27 - Phase 8: Mechanical Engineering toolbox
+- `toolboxes/mechanical` (23 functions, validated by @tb_function): section_rect/circle/tube/
+  ibeam, stress_axial/bending/torsion, mohr, von_mises, safety_factor, buckling_euler, beam
+  (simply supported / cantilever, point loads + UDL); sdof, sdof_free, sdof_forced,
+  transmissibility, log_decrement, modes (MDOF, rigid-body modes); spring_helical, gear_pair,
+  shaft_power, shaft_diameter, fourbar (position, velocity, Grashof).
+- `app/toolbox_bindings.py`: toolbox functions callable from scripts (structs for results,
+  several outputs for tuples); toolbox appears in the Toolbox browser.
+- Docs page "Mechanical Engineering toolbox", `examples/mechanical_example.m`; feature script
+  now 137 checks.
 ## 2026-11-27 - P10b installer and GitHub
 - Packaging: `packaging/engstudio.spec` builds EngineeringStudio.exe (windowed GUI, start-up
   errors shown in a message box and `%LOCALAPPDATA%\EngineeringStudio\startup_error.txt`) and

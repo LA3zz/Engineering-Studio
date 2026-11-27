@@ -55,6 +55,9 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
   before closing editor tabs in fixtures. Qt's "Cannot find font directory" is harmless.
 
 ## Next task
+Mechanical toolbox done (Phase 8, 2026-11-27): `toolboxes/mechanical` + `app/toolbox_bindings.py`.
+New toolboxes follow the same pattern (package with toolbox.toml, FUNCTIONS, register; add the
+name to `toolboxes.BUILTIN`).
 Phase 7 S2: block framework `sim.blocks` (registry of block types: ports, parameters with
 defaults/validation, kind continuous/discrete/algebraic/source/sink, output/derivatives/update
 functions) + math blocks Gain, Sum (Signs '+-'), Product, Constant, Abs, Math Function.

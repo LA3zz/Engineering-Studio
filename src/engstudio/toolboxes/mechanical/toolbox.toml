@@ -1,0 +1,6 @@
+[toolbox]
+name = "mechanical"
+display_name = "Mechanical Engineering"
+version = "0.1.0"
+api_version = 1
+category = "mechanical"

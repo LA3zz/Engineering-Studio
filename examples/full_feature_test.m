@@ -333,6 +333,19 @@ subplot(2, 2, 3); nyquist(Gc)
 subplot(2, 2, 4); rlocus(tf(1, [1 3 2 0]))
 figure(9); bode(Gc)
 
+%% 17. Mechanical Engineering toolbox (Phase 8)
+fprintf('\n--- 17. Mechanical toolbox ---\n');
+pm = sdof(2, 4, 800);
+[np, nf] = check(np, nf, 'sdof', abs(pm.wn - 20) < 1e-12 && abs(pm.zeta - 0.05) < 1e-12);
+rb = beam(2, 200e9, 8e-6, 'simply', 1000, 1);
+[np, nf] = check(np, nf, 'beam PL^3/48EI', abs(rb.max_deflection + 1000*8/(48*200e9*8e-6)) < 1e-9);
+mdm = modes([2 0; 0 1], [600 -200; -200 200]);
+[np, nf] = check(np, nf, 'modes', max(abs(mdm.wn - [10 20])) < 1e-9);
+mc = mohr(80e6, -40e6, 25e6);
+[np, nf] = check(np, nf, 'mohr', abs(mc.s1 - 85e6) < 1 && abs(mc.tau_max - 65e6) < 1);
+fb = fourbar(2, 7, 9, 6, 30);
+[np, nf] = check(np, nf, 'fourbar', abs(fb.theta4 - 117.29) < 0.01 && strcmp(fb.grashof, 'crank-rocker'));
+
 %% Summary
 elapsed = toc;
 fprintf('\n===== %d passed, %d failed, %.1f s =====\n', np, nf, elapsed);

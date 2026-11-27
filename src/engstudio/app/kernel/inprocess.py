@@ -37,6 +37,7 @@ from engstudio.app.kernel.protocol import (
     VariableInfo,
     WorkspaceSummary,
 )
+from engstudio.app.toolbox_bindings import toolbox_builtins
 from engstudio.core.diagnostics import Diagnostic
 from engstudio.core.errors import EngStudioError
 from engstudio.lang.builtins_analysis import install_analysis
@@ -248,6 +249,7 @@ class InProcessKernelClient(KernelClient):
             min_interval=FIGURE_INTERVAL)
         install_control_plots(self._interp, self._figures)
         self._interp.functions.update(self._workspace_commands())
+        self._toolbox_categories = self._install_toolboxes()
         self._next_id = 1
         self._closed = False
         self._lock = threading.Lock()
@@ -309,7 +311,7 @@ class InProcessKernelClient(KernelClient):
         available = set(self._interp.functions)
         boxes: list[ToolboxInfo] = []
         listed: set[str] = set()
-        for key, (title, names) in _CATEGORIES.items():
+        for key, (title, names) in {**_CATEGORIES, **self._toolbox_categories}.items():
             present = sorted(n for n in names if n in available)
             listed.update(present)
             if present:
@@ -383,6 +385,21 @@ class InProcessKernelClient(KernelClient):
                 self._flush_figures()
         self._deliver(WorkspaceSummary(rid, self._variables()))
         self._deliver(ExecutionFinished(rid, status))
+
+    def _install_toolboxes(self) -> dict[str, tuple[str, tuple[str, ...]]]:
+        """Engineering toolboxes (Phase 8). A toolbox never replaces an existing builtin, and a
+        toolbox that fails to load never stops the kernel from starting."""
+        try:
+            builtins, categories = toolbox_builtins()
+        except Exception:
+            _log.exception("toolboxes failed to load")
+            return {}
+        for name, fn in builtins.items():
+            if name in self._interp.functions:
+                _log.warning("toolbox function %s hides nothing: name already taken", name)
+                continue
+            self._interp.functions[name] = fn
+        return categories
 
     def _flush_figures(self) -> None:
         try:
