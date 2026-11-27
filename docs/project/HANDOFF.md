@@ -55,10 +55,12 @@ Paste NEW_CHAT_PROMPT.md, attach this file + TASKS.md + only the files named in 
   before closing editor tabs in fixtures. Qt's "Cannot find font directory" is harmless.
 
 ## Next task
-Phase 7: simulation environment (Simulink-style), 17 incremental steps; start with the
-headless model + solver (`engstudio.sim`: blocks, wiring, compile to ODE, run, scopes data),
-then the editor GUI. Reuse `control.lti` for Transfer Fcn / State-Space / PID blocks.
-Attach: TASKS.md, ARCHITECTURE.md (sim section), `control/lti.py`, `engine/ode.py`.
+Phase 7 S2: block framework `sim.blocks` (registry of block types: ports, parameters with
+defaults/validation, kind continuous/discrete/algebraic/source/sink, output/derivatives/update
+functions) + math blocks Gain, Sum (Signs '+-'), Product, Constant, Abs, Math Function.
+S1 is done: `sim.model` (immutable Model/Block/Line/SolverSettings, edit methods return new
+models) and `sim.serialization` (.esmodel JSON, schema_version 1). Plan S1-S17 in TASKS.md.
+Attach: TASKS.md, ARCHITECTURE.md section 8, `sim/model.py`, `core/plugin.py` (@sim_block).
 Backlogs: Phase 5 (yyaxis, tiledlayout, fill/patch, quiver, stacked bars, colormap matrices,
 getframe/movie, Window menu); Phase 6 (MIMO responses, delays, pidTuner, discrete PID);
 performance (compile anonymous functions; `sum(x, 'all')`).
