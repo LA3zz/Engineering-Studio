@@ -151,6 +151,9 @@ def test_fourbar_norton_example():
     vx = -2 * 10 * math.sin(t2) - 7 * r.omega3 * math.sin(t3) + 9 * r.omega4 * math.sin(t4)
     vy = 2 * 10 * math.cos(t2) + 7 * r.omega3 * math.cos(t3) - 9 * r.omega4 * math.cos(t4)
     assert (vx, vy) == pytest.approx((0, 0), abs=1e-9)
+    # joint coordinates close the loop: |AB| = b, |B O4| = c
+    assert math.hypot(r.x[2] - r.x[1], r.y[2] - r.y[1]) == pytest.approx(7)
+    assert math.hypot(r.x[3] - r.x[2], r.y[3] - r.y[2]) == pytest.approx(9)
     assert me.fourbar(2, 7, 9, 6, 30, branch="crossed").theta4 != r.theta4
     assert me.fourbar(5, 5, 5, 5, 10).grashof == "change-point"
     with pytest.raises(EngStudioError, match="cannot be assembled"):

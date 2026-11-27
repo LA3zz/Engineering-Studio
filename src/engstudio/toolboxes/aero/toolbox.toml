@@ -1,0 +1,6 @@
+[toolbox]
+name = "aero"
+display_name = "Aerospace"
+version = "0.1.0"
+api_version = 1
+category = "aerospace"

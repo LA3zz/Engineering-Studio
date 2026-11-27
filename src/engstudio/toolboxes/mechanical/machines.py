@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+import numpy as np
+
 from engstudio.core.errors import ValidationError
 from engstudio.core.plugin import Arg, Ret, tb_function
 
@@ -81,6 +83,8 @@ class FourBar:
     omega4: float
     grashof: str  # 'crank-rocker', 'double-crank', 'rocker-crank', 'double-rocker',
     # 'change-point' or 'triple-rocker' (non-Grashof)
+    x: np.ndarray  # joint x coordinates [O2 A B O4]: plot(r.x, r.y, '-o') draws the linkage
+    y: np.ndarray
 
 
 def _grashof(a: float, b: float, c: float, d: float) -> str:
@@ -129,4 +133,6 @@ def fourbar(a: float, b: float, c: float, d: float, theta2: float, omega2: float
     w3 = a * omega2 / b * math.sin(t4 - t2) / math.sin(t3 - t4) if denom3 else math.nan
     w4 = a * omega2 / c * math.sin(t2 - t3) / math.sin(t4 - t3) if denom3 else math.nan
     norm = lambda ang: (math.degrees(ang) + 360) % 360  # noqa: E731
-    return FourBar(norm(t3), norm(t4), w3, w4, _grashof(a, b, c, d))
+    x = np.array([0.0, a * math.cos(t2), d + c * math.cos(t4), d])
+    y = np.array([0.0, a * math.sin(t2), c * math.sin(t4), 0.0])
+    return FourBar(norm(t3), norm(t4), w3, w4, _grashof(a, b, c, d), x, y)
